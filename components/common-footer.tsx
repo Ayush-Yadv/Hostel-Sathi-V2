@@ -3,61 +3,68 @@ import { Instagram, Facebook, Linkedin, Youtube } from "lucide-react"
 
 export default function CommonFooter() {
   return (
-    <footer className="bg-[#1A0D2F] text-white p-6">
-      <div className="mb-6 flex justify-center">
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-white w-10 h-10 flex items-center justify-center">
-            <span className="text-[#5A00F0] font-bold text-lg">HS</span>
+    <footer className="bg-[#1A0D2F] text-white px-4 py-8 md:px-6 md:py-10 lg:py-12">
+      <div className="container mx-auto max-w-7xl">
+        {/* Logo Section */}
+        <div className="mb-8 md:mb-10">
+          <div className="flex items-center justify-center gap-3">
+            <div className="rounded-full bg-white w-10 h-10 flex items-center justify-center">
+              <span className="text-[#5A00F0] font-bold text-lg">HS</span>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Hostel Sathi</h3>
+              <p className="text-sm italic">Your Second Home</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold">Hostel Sathi</h3>
-            <p className="text-sm italic">Your Second Home</p>
+        </div>
+
+        {/* Links Grid */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 max-w-md mx-auto md:grid-cols-4 md:max-w-2xl lg:max-w-4xl xl:gap-x-8">
+          <div className="flex flex-col items-center md:items-start space-y-3">
+            <Link href="/about-us" className="hover:text-[#B366FF] transition-colors">
+              About us
+            </Link>
+            <Link href="/contact-us" className="hover:text-[#B366FF] transition-colors">
+              Contact us
+            </Link>
           </div>
+          <div className="flex flex-col items-center md:items-start space-y-3">
+            <Link href="/team" className="hover:text-[#B366FF] transition-colors">
+              Team
+            </Link>
+            <Link href="/blogs" className="hover:text-[#B366FF] transition-colors">
+              Blogs
+            </Link>
+          </div>
+          <div className="flex flex-col items-center md:items-start space-y-3">
+            <Link href="/privacy" className="hover:text-[#B366FF] transition-colors">
+              Privacy policy
+            </Link>
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <p className="text-center md:text-left mb-4">Follow us:</p>
+            <div className="flex gap-6 justify-center md:justify-start">
+              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+                <Instagram size={20} />
+              </Link>
+              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+                <Facebook size={20} />
+              </Link>
+              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+                <Linkedin size={20} />
+              </Link>
+              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+                <Youtube size={20} />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-8 md:mt-10 pt-6 border-t border-gray-800">
+          <p className="text-sm text-gray-400 text-center">© 2023 Hostel Sathi. All rights reserved.</p>
         </div>
       </div>
-
-      <div className="grid grid-cols-2 gap-6 max-w-md mx-auto md:grid-cols-4 md:max-w-2xl lg:max-w-4xl">
-        <div className="space-y-2">
-          <Link href="/about-us" className="block text-center md:text-left hover:text-[#B366FF] transition-colors">
-            About us
-          </Link>
-          <Link href="/contact-us" className="block text-center md:text-left hover:text-[#B366FF] transition-colors">
-            Contact us
-          </Link>
-        </div>
-        <div className="space-y-2">
-          <Link href="/team" className="block text-center md:text-left hover:text-[#B366FF] transition-colors">
-            Team
-          </Link>
-          <Link href="/blogs" className="block text-center md:text-left hover:text-[#B366FF] transition-colors">
-            Blogs
-          </Link>
-        </div>
-        <div className="space-y-2">
-          <Link href="/privacy" className="block text-center md:text-left hover:text-[#B366FF] transition-colors">
-            Privacy policy
-          </Link>
-        </div>
-        <div className="space-y-2 col-span-2 md:col-span-1">
-          <p className="text-center md:text-left mb-2">Follow us:</p>
-          <div className="flex gap-4 justify-center md:justify-start">
-            <Link href="#" className="hover:text-[#B366FF] transition-colors">
-              <Instagram size={20} />
-            </Link>
-            <Link href="#" className="hover:text-[#B366FF] transition-colors">
-              <Facebook size={20} />
-            </Link>
-            <Link href="#" className="hover:text-[#B366FF] transition-colors">
-              <Linkedin size={20} />
-            </Link>
-            <Link href="#" className="hover:text-[#B366FF] transition-colors">
-              <Youtube size={20} />
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <p className="mt-6 text-sm text-gray-400 text-center">© 2023 Hostel Sathi. All rights reserved.</p>
     </footer>
   )
 }
