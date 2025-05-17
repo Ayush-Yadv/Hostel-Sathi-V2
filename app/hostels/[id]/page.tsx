@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useParams, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import CommonNavbar from "@/components/common-navbar"
 import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
@@ -267,400 +268,316 @@ export default function HostelDetailsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
-        <div className="flex items-center">
-          <Link href={`/hostels?college=${encodeURIComponent(collegeParam || "")}`} className="text-[#5A00F0] mr-2">
-            <ArrowLeft size={24} />
-          </Link>
-          <Link href="/" className="flex items-center">
-            <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">HS</span>
-            </div>
-            <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
-          </Link>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="text-[#5A00F0] hidden md:block">
-            <Phone size={24} />
-          </button>
-          <button
-            onClick={handleAuthAction}
-            className="bg-[#8300FF] text-white font-semibold px-4 py-2 rounded-md hover:bg-[#7000DD] transition flex items-center gap-2"
-          >
-            {isLoggedIn ? (
-              <>
-                <LogOut size={18} />
-                <span>Logout</span>
-              </>
-            ) : (
-              "Login/sign up"
-            )}
-          </button>
-          {isDesktop && (
-            <button onClick={toggleMobileMenu} className="text-[#5A00F0]">
-              <Menu size={24} />
-            </button>
-          )}
-        </div>
-      </header>
-
-      {/* Desktop Navigation Menu (Hamburger) */}
-      {isDesktop && mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-end">
-          <div className="bg-white w-80 h-full shadow-lg p-6 animate-slide-in-right">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold">Menu</h2>
-              <button onClick={toggleMobileMenu} className="text-gray-500">
-                <X size={24} />
-              </button>
-            </div>
-            <nav className="space-y-6">
-              <Link href="/" className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors">
-                <Home size={24} />
-                <span>Home</span>
-              </Link>
-              <Link
-                href="/saved-hostels"
-                className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
-              >
-                <Heart size={24} />
-                <span>Saved Hostels</span>
-              </Link>
-              <Link href="/hostels" className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors">
-                <BookOpen size={24} />
-                <span>All Hostels</span>
-              </Link>
-              {isLoggedIn ? (
-                <button
-                  onClick={handleAuthAction}
-                  className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors w-full text-left"
-                >
-                  <LogOut size={24} />
-                  <span>Logout</span>
-                </button>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
-                >
-                  <User size={24} />
-                  <span>Account</span>
-                </Link>
-              )}
-              <div className="pt-6 border-t border-gray-200">
-                <Link
-                  href="/#contact-form"
-                  className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
-                >
-                  <Phone size={24} />
-                  <span>Contact Us</span>
-                </Link>
-              </div>
-            </nav>
-          </div>
-        </div>
-      )}
+      <CommonNavbar />
 
       {/* Main Content */}
       <main className="flex-1 bg-gray-50">
-        {/* Image Gallery */}
-        <section className="relative bg-black">
-          <div className="relative h-64 md:h-96 lg:h-[500px]">
-            <Image
-              src={hostel.images[activeImageIndex] || "/placeholder.svg"}
-              alt={`${hostel.name} - Image ${activeImageIndex + 1}`}
-              fill
-              className="object-cover"
-            />
+        {hostel ? (
+          <>
+            {/* Image Gallery */}
+            <section className="relative bg-black">
+              <div className="relative h-64 md:h-96 lg:h-[500px]">
+                <Image
+                  src={hostel.images[activeImageIndex] || "/placeholder.svg"}
+                  alt={`${hostel.name} - Image ${activeImageIndex + 1}`}
+                  fill
+                  className="object-cover"
+                />
 
-            {/* Type and Gender Badge */}
-            <div className="absolute top-4 left-4 flex gap-2 z-10">
-              <span className="bg-[#5A00F0] text-white px-3 py-1 rounded-full uppercase text-sm font-medium">
-                {hostel.type}
-              </span>
-              <span
-                className={`text-white px-3 py-1 rounded-full uppercase text-sm font-medium ${
-                  hostel.gender === "boys" ? "bg-blue-500" : hostel.gender === "girls" ? "bg-pink-500" : "bg-purple-500"
-                }`}
-              >
-                {hostel.gender}
-              </span>
-            </div>
-
-            {/* Save Button */}
-            <button
-              onClick={toggleSaveHostel}
-              className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md z-10"
-            >
-              <Heart
-                size={24}
-                className={savedHostels.includes(id) ? "fill-[#FF6B6B] text-[#FF6B6B]" : "text-gray-400"}
-              />
-            </button>
-
-            {/* Image Navigation */}
-            <button
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-              onClick={prevImage}
-            >
-              <ChevronLeft className="text-[#5A00F0]" />
-            </button>
-            <button
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-              onClick={nextImage}
-            >
-              <ChevronRight className="text-[#5A00F0]" />
-            </button>
-
-            {/* Image Counter */}
-            <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-              {activeImageIndex + 1} / {hostel.images.length}
-            </div>
-          </div>
-
-          {/* Thumbnail Gallery */}
-          <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
-            <div className="flex gap-2">
-              {hostel.images.map((image, index) => (
-                <button
-                  key={index}
-                  className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
-                    activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
-                  }`}
-                  onClick={() => goToImage(index)}
-                >
-                  <Image
-                    src={image || "/placeholder.svg"}
-                    alt={`Thumbnail ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Hostel Details */}
-        <section className="py-6 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold mb-2">{hostel.name}</h1>
-                  <div className="flex items-center mb-2">
-                    <MapPin size={16} className="text-gray-500 mr-1" />
-                    <span className="text-gray-500">{hostel.address}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex items-center bg-[#5A00F0] text-white px-2 py-1 rounded mr-3">
-                      <Star size={14} className="fill-white mr-1" />
-                      <span>{hostel.rating}</span>
-                    </div>
-                    <span className="text-gray-500">{hostel.reviews} reviews</span>
-                  </div>
-                </div>
-                <div className="mt-4 md:mt-0">
-                  <div className="text-3xl font-bold text-[#5A00F0]">₹{hostel.price}</div>
-                  <div className="text-gray-500">per month</div>
-                </div>
-              </div>
-
-              {/* Accommodation Type and Gender */}
-              <div className="border-t border-gray-200 pt-4 mb-4">
-                <h2 className="text-xl font-bold mb-3">Accommodation Details</h2>
-                <div className="flex flex-wrap gap-4">
-                  <div className="flex items-center">
-                    {hostel.type === "hostel" ? (
-                      <Building2 size={18} className="text-[#5A00F0] mr-2" />
-                    ) : (
-                      <Building size={18} className="text-[#5A00F0] mr-2" />
-                    )}
-                    <span className="font-medium">{hostel.type === "hostel" ? "Hostel" : "Paying Guest (PG)"}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Users size={18} className="text-[#5A00F0] mr-2" />
-                    <span className="font-medium">
-                      For {hostel.gender === "boys" ? "Boys" : hostel.gender === "girls" ? "Girls" : "Boys & Girls"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4 mb-4">
-                <h2 className="text-xl font-bold mb-3">Distance</h2>
-                <div className="flex items-center">
-                  <MapPin size={18} className="text-[#5A00F0] mr-2" />
-                  <span>
-                    {hostel.distance[collegeParam ?? "Other"] || hostel.distance["Other"]} km from {collegeParam || "city center"}
+                {/* Type and Gender Badge */}
+                <div className="absolute top-4 left-4 flex gap-2 z-10">
+                  <span className="bg-[#5A00F0] text-white px-3 py-1 rounded-full uppercase text-sm font-medium">
+                    {hostel.type}
                   </span>
-                  {/* <span>
-                    {hostel.distance[collegeParam] || hostel.distance["Other"]} km from {collegeParam || "city center"}
-                  </span> */}
+                  <span
+                    className={`text-white px-3 py-1 rounded-full uppercase text-sm font-medium ${
+                      hostel.gender === "boys" ? "bg-blue-500" : hostel.gender === "girls" ? "bg-pink-500" : "bg-purple-500"
+                    }`}
+                  >
+                    {hostel.gender}
+                  </span>
                 </div>
-              </div>
 
-              <div className="border-t border-gray-200 pt-4 mb-4">
-                <h2 className="text-xl font-bold mb-3">Description</h2>
-                <p className="text-gray-700">{hostel.description}</p>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4">
-                <h2 className="text-xl font-bold mb-3">Amenities</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {hostel.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center">
-                      <div className="text-[#5A00F0] mr-2">{getAmenityIcon(amenity)}</div>
-                      <span>{amenity}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Reviews Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Reviews</h2>
+                {/* Save Button */}
                 <button
-                  onClick={() => setShowReviewForm(!showReviewForm)}
-                  className="bg-[#8300FF] text-white px-4 py-2 rounded-md hover:bg-[#7000DD] transition"
+                  onClick={toggleSaveHostel}
+                  className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md z-10"
                 >
-                  {showReviewForm ? "Cancel" : "Write a Review"}
+                  <Heart
+                    size={24}
+                    className={savedHostels.includes(id) ? "fill-[#FF6B6B] text-[#FF6B6B]" : "text-gray-400"}
+                  />
                 </button>
+
+                {/* Image Navigation */}
+                <button
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                  onClick={prevImage}
+                >
+                  <ChevronLeft className="text-[#5A00F0]" />
+                </button>
+                <button
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                  onClick={nextImage}
+                >
+                  <ChevronRight className="text-[#5A00F0]" />
+                </button>
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                  {activeImageIndex + 1} / {hostel.images.length}
+                </div>
               </div>
 
-              {showReviewForm && (
-                <form onSubmit={handleReviewSubmit} className="mb-6 border-b border-gray-200 pb-6">
-                  <div className="mb-4">
-                    <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Review
-                    </label>
-                    <textarea
-                      id="review"
-                      rows={4}
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                      placeholder="Share your experience with this hostel..."
-                      required
-                    ></textarea>
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-[#8300FF] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#7000DD] transition"
-                  >
-                    Submit Review
-                  </button>
-                </form>
-              )}
-
-              {reviews.length > 0 ? (
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-200 pb-4 last:border-0">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center">
-                          <div className="bg-[#5A00F0] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3">
-                            {review.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-bold">{review.name}</p>
-                            <div className="flex items-center">
-                              {Array(review.rating)
-                                .fill(0)
-                                .map((_, i) => (
-                                  <Star key={i} className="fill-[#FFD700] stroke-none" size={14} />
-                                ))}
-                            </div>
-                          </div>
-                        </div>
-                        <span className="text-gray-500 text-sm">{review.date}</span>
-                      </div>
-                      <p className="mt-2 text-gray-700">{review.text}</p>
-                    </div>
+              {/* Thumbnail Gallery */}
+              <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
+                <div className="flex gap-2">
+                  {hostel.images.map((image, index) => (
+                    <button
+                      key={index}
+                      className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
+                        activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
+                      }`}
+                      onClick={() => goToImage(index)}
+                    >
+                      <Image
+                        src={image || "/placeholder.svg"}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500 text-center py-4">No reviews yet. Be the first to review!</p>
-              )}
-            </div>
+              </div>
+            </section>
 
-            {/* Booking Form */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-bold mb-4">Book This {hostel.type === "hostel" ? "Hostel" : "PG"}</h2>
-              <form className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-                <div className="md:col-span-1">
-                  <label htmlFor="booking-name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="booking-name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                    placeholder="Your name"
-                  />
+            {/* Hostel Details */}
+            <section className="py-6 px-4">
+              <div className="max-w-6xl mx-auto">
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+                    <div>
+                      <h1 className="text-2xl md:text-3xl font-bold mb-2">{hostel.name}</h1>
+                      <div className="flex items-center mb-2">
+                        <MapPin size={16} className="text-gray-500 mr-1" />
+                        <span className="text-gray-500">{hostel.address}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex items-center bg-[#5A00F0] text-white px-2 py-1 rounded mr-3">
+                          <Star size={14} className="fill-white mr-1" />
+                          <span>{hostel.rating}</span>
+                        </div>
+                        <span className="text-gray-500">{hostel.reviews} reviews</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 md:mt-0">
+                      <div className="text-3xl font-bold text-[#5A00F0]">₹{hostel.price}</div>
+                      <div className="text-gray-500">per month</div>
+                    </div>
+                  </div>
+
+                  {/* Accommodation Type and Gender */}
+                  <div className="border-t border-gray-200 pt-4 mb-4">
+                    <h2 className="text-xl font-bold mb-3">Accommodation Details</h2>
+                    <div className="flex flex-wrap gap-4">
+                      <div className="flex items-center">
+                        {hostel.type === "hostel" ? (
+                          <Building2 size={18} className="text-[#5A00F0] mr-2" />
+                        ) : (
+                          <Building size={18} className="text-[#5A00F0] mr-2" />
+                        )}
+                        <span className="font-medium">{hostel.type === "hostel" ? "Hostel" : "Paying Guest (PG)"}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Users size={18} className="text-[#5A00F0] mr-2" />
+                        <span className="font-medium">
+                          For {hostel.gender === "boys" ? "Boys" : hostel.gender === "girls" ? "Girls" : "Boys & Girls"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-4 mb-4">
+                    <h2 className="text-xl font-bold mb-3">Distance</h2>
+                    <div className="flex items-center">
+                      <MapPin size={18} className="text-[#5A00F0] mr-2" />
+                      <span>
+                        {hostel.distance[collegeParam ?? "Other"] || hostel.distance["Other"]} km from {collegeParam || "city center"}
+                      </span>
+                      {/* <span>
+                        {hostel.distance[collegeParam] || hostel.distance["Other"]} km from {collegeParam || "city center"}
+                      </span> */}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-4 mb-4">
+                    <h2 className="text-xl font-bold mb-3">Description</h2>
+                    <p className="text-gray-700">{hostel.description}</p>
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-4">
+                    <h2 className="text-xl font-bold mb-3">Amenities</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {hostel.amenities.map((amenity, index) => (
+                        <div key={index} className="flex items-center">
+                          <div className="text-[#5A00F0] mr-2">{getAmenityIcon(amenity)}</div>
+                          <span>{amenity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="md:col-span-1">
-                  <label htmlFor="booking-phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Contact Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="booking-phone"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                    placeholder="Your phone number"
-                  />
+                {/* Reviews Section */}
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold">Reviews</h2>
+                    <button
+                      onClick={() => setShowReviewForm(!showReviewForm)}
+                      className="bg-[#8300FF] text-white px-4 py-2 rounded-md hover:bg-[#7000DD] transition"
+                    >
+                      {showReviewForm ? "Cancel" : "Write a Review"}
+                    </button>
+                  </div>
+
+                  {showReviewForm && (
+                    <form onSubmit={handleReviewSubmit} className="mb-6 border-b border-gray-200 pb-6">
+                      <div className="mb-4">
+                        <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
+                          Your Review
+                        </label>
+                        <textarea
+                          id="review"
+                          rows={4}
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                          placeholder="Share your experience with this hostel..."
+                          required
+                        ></textarea>
+                      </div>
+                      <button
+                        type="submit"
+                        className="bg-[#8300FF] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#7000DD] transition"
+                      >
+                        Submit Review
+                      </button>
+                    </form>
+                  )}
+
+                  {reviews.length > 0 ? (
+                    <div className="space-y-4">
+                      {reviews.map((review) => (
+                        <div key={review.id} className="border-b border-gray-200 pb-4 last:border-0">
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-center">
+                              <div className="bg-[#5A00F0] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3">
+                                {review.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="font-bold">{review.name}</p>
+                                <div className="flex items-center">
+                                  {Array(review.rating)
+                                    .fill(0)
+                                    .map((_, i) => (
+                                      <Star key={i} className="fill-[#FFD700] stroke-none" size={14} />
+                                    ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-gray-500 text-sm">{review.date}</span>
+                          </div>
+                          <p className="mt-2 text-gray-700">{review.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">No reviews yet. Be the first to review!</p>
+                  )}
                 </div>
 
-                <div className="md:col-span-2">
-                  <label htmlFor="booking-college" className="block text-sm font-medium text-gray-700 mb-1">
-                    College
-                  </label>
-                  <input
-                    type="text"
-                    id="booking-college"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                    placeholder="Your college name"
-                    defaultValue={collegeParam || ""}
-                  />
-                </div>
+                {/* Booking Form */}
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h2 className="text-2xl font-bold mb-4">Book This {hostel.type === "hostel" ? "Hostel" : "PG"}</h2>
+                  <form className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+                    <div className="md:col-span-1">
+                      <label htmlFor="booking-name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="booking-name"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                        placeholder="Your name"
+                      />
+                    </div>
 
-                <div className="md:col-span-2">
-                  <label htmlFor="booking-message" className="block text-sm font-medium text-gray-700 mb-1">
-                    Message
-                  </label>
-                  <textarea
-                    id="booking-message"
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                    placeholder="Any specific requirements or questions?"
-                  ></textarea>
-                </div>
+                    <div className="md:col-span-1">
+                      <label htmlFor="booking-phone" className="block text-sm font-medium text-gray-700 mb-1">
+                        Contact Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="booking-phone"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                        placeholder="Your phone number"
+                      />
+                    </div>
 
-                <div className="md:col-span-2">
-                  <button
-                    type="submit"
-                    className="w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2"
-                  >
-                    Book Now <Send size={16} />
-                  </button>
+                    <div className="md:col-span-2">
+                      <label htmlFor="booking-college" className="block text-sm font-medium text-gray-700 mb-1">
+                        College
+                      </label>
+                      <input
+                        type="text"
+                        id="booking-college"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                        placeholder="Your college name"
+                        defaultValue={collegeParam || ""}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label htmlFor="booking-message" className="block text-sm font-medium text-gray-700 mb-1">
+                        Message
+                      </label>
+                      <textarea
+                        id="booking-message"
+                        rows={4}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                        placeholder="Any specific requirements or questions?"
+                      ></textarea>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <button
+                        type="submit"
+                        className="w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2"
+                      >
+                        Book Now <Send size={16} />
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p>Loading...</p>
           </div>
-        </section>
+        )}
+      </main>
 
-               {/* WhatsApp Button */}
-                <WhatsAppButton />
-              </main>
-        
-              {/* Footer */}
-              <CommonFooter />
-        
-              {/* Mobile Navigation */}
-              <MobileNav />
-            </div>
+      {/* WhatsApp Button */}
+      <WhatsAppButton />
+
+      {/* Footer */}
+      <CommonFooter />
+
+      {/* Mobile Navigation */}
+      <MobileNav />
+    </div>
   )
 }

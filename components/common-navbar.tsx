@@ -2,190 +2,207 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { Menu, X, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import {
+  Menu,
+  Phone,
+  Heart,
+  Home,
+  BookOpen,
+  User,
+  X,
+  LogOut,
+  Building2,
+} from "lucide-react"
 import { onAuthChange, signOut } from "@/lib/auth"
 
 export default function CommonNavbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  // State for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // State for login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  // Handle window resize
+  const [isDesktop, setIsDesktop] = useState(false)
 
   useEffect(() => {
-    const unsubscribe = onAuthChange((authUser) => {
-      setUser(authUser)
-      setLoading(false)
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024)
+    }
+
+    // Set initial value
+    handleResize()
+
+    // Add event listener
+    window.addEventListener("resize", handleResize)
+
+    // Check auth state
+    const unsubscribe = onAuthChange((user) => {
+      setIsLoggedIn(!!user)
+      setCurrentUser(user)
     })
 
-    return () => unsubscribe()
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      unsubscribe()
+    }
   }, [])
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
   }
 
-  const handleSignOut = async () => {
-    await signOut()
-    setIsMenuOpen(false)
+  // Handle login/logout
+  const handleAuthAction = async () => {
+    if (isLoggedIn) {
+      // Logout logic
+      await signOut()
+    } else {
+      // Navigate to login page
+      router.push("/auth/login")
+    }
   }
 
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image src="/logo.png" alt="Hostel Sathi" width={40} height={40} />
-              <span className="ml-2 text-xl font-bold text-blue-600">Hostel Sathi</span>
-              <span className="ml-2 text-sm text-gray-500 hidden sm:block">Your Second Home</span>
-            </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
-            <Link href="/" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">
-              Home
-            </Link>
-            <Link
-              href="/hostels"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-            >
-              Hostels/PGs
-            </Link>
-            <Link href="/blogs" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">
-              Blogs
-            </Link>
-            <Link
-              href="/about-us"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact-us"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-            >
-              Contact Us
-            </Link>
-            <Link
-              href="/list-property"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-            >
-              List Property
-            </Link>
-
-            {!loading && (
-              <>
-                {user ? (
-                  <div className="flex items-center space-x-2">
-                    <Button asChild variant="ghost" size="sm" className="flex items-center gap-1">
-                      <Link href="/profile">
-                        <User className="h-4 w-4" />
-                        <span className="ml-1">Profile</span>
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleSignOut}>
-                      Logout
-                    </Button>
-                  </div>
-                ) : (
-                  <Button asChild size="sm">
-                    <Link href="/auth/login">Login</Link>
-                  </Button>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 focus:outline-none"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
-          </div>
+    <>
+      {/* Top Header */}
+      <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center">
+            <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
+              <span className="text-white font-bold text-lg">HS</span>
+            </div>
+            <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
+          </Link>
         </div>
-      </div>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link
-              href="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              Home
-            </Link>
-            <Link
-              href="/hostels"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              Hostels/PGs
-            </Link>
-            <Link
-              href="/blogs"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              Blogs
-            </Link>
-            <Link
-              href="/about-us"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact-us"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              Contact Us
-            </Link>
-            <Link
-              href="/list-property"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              List Property
-            </Link>
-
-            {!loading && (
+        <div className="flex items-center gap-4">
+          <button className="text-[#5A00F0] hidden md:block">
+            <Phone size={24} />
+          </button>
+          <button
+            onClick={handleAuthAction}
+            className="bg-[#8300FF] text-white font-semibold px-4 py-2 rounded-md hover:bg-[#7000DD] transition flex items-center gap-2"
+          >
+            {isLoggedIn ? (
               <>
-                {user ? (
-                  <>
-                    <Link
-                      href="/profile"
-                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
-                    >
-                      Logout
-                    </button>
-                  </>
+                <LogOut size={18} />
+                <span>Logout</span>
+              </>
+            ) : (
+              "Login/sign up"
+            )}
+          </button>
+          <Link
+            href="/list-property"
+            className="hidden md:flex items-center gap-2 text-[#5A00F0] hover:text-[#7000DD] transition"
+          >
+            <Building2 size={18} />
+            <span>List Your Property</span>
+          </Link>
+          {isDesktop && (
+            <button onClick={toggleMobileMenu} className="text-[#5A00F0]">
+              <Menu size={24} />
+            </button>
+          )}
+        </div>
+
+        {/* Desktop Navigation Menu (Hamburger) */}
+        {isDesktop && mobileMenuOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-end">
+            <div className="bg-white w-80 h-full shadow-lg p-6 animate-slide-in-right">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-xl font-bold">Menu</h2>
+                <button onClick={toggleMobileMenu} className="text-gray-500">
+                  <X size={24} />
+                </button>
+              </div>
+              <nav className="space-y-6">
+                <Link href="/" className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors">
+                  <Home size={24} />
+                  <span>Home</span>
+                </Link>
+                <Link
+                  href="/saved-hostels"
+                  className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
+                >
+                  <Heart size={24} />
+                  <span>Saved Hostels</span>
+                </Link>
+                <Link href="/hostels" className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors">
+                  <BookOpen size={24} />
+                  <span>Hostels/PG's</span>
+                </Link>
+                {isLoggedIn ? (
+                  <button
+                    onClick={handleAuthAction}
+                    className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors w-full text-left"
+                  >
+                    <LogOut size={24} />
+                    <span>Logout</span>
+                  </button>
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600"
+                    className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
                   >
-                    Login
+                    <User size={24} />
+                    <span>Login/Sign up</span>
                   </Link>
                 )}
-              </>
-            )}
+                <div className="pt-6 border-t border-gray-200">
+                  <Link
+                    href="/about-us"
+                    className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors"
+                  >
+                    <span>About Us</span>
+                  </Link>
+                  <Link
+                    href="/team"
+                    className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors mt-4"
+                  >
+                    <span>Our Team</span>
+                  </Link>
+                  <Link
+                    href="/contact-us"
+                    className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors mt-4"
+                  >
+                    <Phone size={24} />
+                    <span>Contact Us</span>
+                  </Link>
+                </div>
+              </nav>
+            </div>
           </div>
+        )}
+      </header>
+
+      {/* Mobile Bottom Navigation - Only visible on mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 lg:hidden z-50">
+        <div className="flex justify-around items-center p-3">
+          <Link href="/" className="flex flex-col items-center text-gray-600 hover:text-[#5A00F0]">
+            <Home size={24} />
+            <span className="text-xs mt-1">Home</span>
+          </Link>
+          <Link href="/hostels" className="flex flex-col items-center text-gray-600 hover:text-[#5A00F0]">
+            <BookOpen size={24} />
+            <span className="text-xs mt-1">Hostels/PG's</span>
+          </Link>
+          <Link href="/saved-hostels" className="flex flex-col items-center text-gray-600 hover:text-[#5A00F0]">
+            <Heart size={24} />
+            <span className="text-xs mt-1">Saved</span>
+          </Link>
+          <Link href="/list-property" className="flex flex-col items-center text-gray-600 hover:text-[#5A00F0]">
+            <Building2 size={24} />
+            <span className="text-xs mt-1">List Property</span>
+          </Link>
         </div>
-      )}
-    </nav>
+      </nav>
+    </>
   )
 }

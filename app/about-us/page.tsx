@@ -4,6 +4,10 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, MapPin, Phone, Mail, ChevronDown, ChevronUp } from "lucide-react"
+import CommonNavbar from "@/components/common-navbar"
+import CommonFooter from "@/components/common-footer"
+import WhatsAppButton from "@/components/whatsapp-button"
+import MobileNav from "@/components/mobile-nav"
 
 export default function AboutUsPage() {
   const [isDesktop, setIsDesktop] = useState(false)
@@ -59,19 +63,7 @@ export default function AboutUsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
-        <div className="flex items-center">
-          <Link href="/" className="text-[#5A00F0] mr-2">
-            <ArrowLeft size={24} />
-          </Link>
-          <Link href="/" className="flex items-center">
-            <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">HS</span>
-            </div>
-            <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
-          </Link>
-        </div>
-      </header>
+      <CommonNavbar />
 
       {/* Main Content */}
       <main className="flex-1 bg-gray-50">
@@ -230,21 +222,14 @@ export default function AboutUsPage() {
         </section>
       </main>
 
+      {/* WhatsApp Button */}
+      <WhatsAppButton />
+
       {/* Footer */}
-      <footer className="bg-[#1A0D2F] text-white p-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="rounded-full bg-white w-10 h-10 flex items-center justify-center">
-              <span className="text-[#5A00F0] font-bold text-lg">HS</span>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">Hostel sathi</h3>
-              <p className="text-sm italic">Your secret home</p>
-            </div>
-          </div>
-          <p className="mt-6 text-sm text-gray-400">© 2023 Hostel Sathi. All rights reserved.</p>
-        </div>
-      </footer>
+      <CommonFooter />
+
+      {/* Mobile Navigation */}
+      <MobileNav />
     </div>
   )
 }

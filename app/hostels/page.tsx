@@ -26,6 +26,9 @@ import {
 import { hostelsList, type HostelType, type GenderType, type Hostel } from "@/data/hostels"
 import { collegesList } from "@/data/colleges"
 import CommonNavbar from "@/components/common-navbar"
+import CommonFooter from "@/components/common-footer"
+import WhatsAppButton from "@/components/whatsapp-button"
+import MobileNav from "@/components/mobile-nav"
 
 export default function HostelsPage() {
   const router = useRouter()
@@ -467,79 +470,14 @@ export default function HostelsPage() {
         </section>
       </main>
 
+      {/* WhatsApp Button */}
+      <WhatsAppButton />
+
       {/* Footer */}
-      <footer className="bg-[#1A0D2F] text-white p-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="rounded-full bg-white w-10 h-10 flex items-center justify-center">
-              <span className="text-[#5A00F0] font-bold text-lg">HS</span>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">Hostel sathi</h3>
-              <p className="text-sm italic">Your secret home</p>
-            </div>
-          </div>
+      <CommonFooter />
 
-          <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto md:grid-cols-4 md:max-w-2xl">
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                About us
-              </Link>
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Contact us
-              </Link>
-            </div>
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Privacy policy
-              </Link>
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Terms of use
-              </Link>
-            </div>
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                FAQs
-              </Link>
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Support
-              </Link>
-            </div>
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Careers
-              </Link>
-              <Link href="#" className="block hover:text-[#B366FF] transition-colors">
-                Partners
-              </Link>
-            </div>
-          </div>
-
-          <p className="mt-6 text-sm text-gray-400">© 2023 Hostel Sathi. All rights reserved.</p>
-        </div>
-      </footer>
-
-      {/* Bottom Navigation - Only visible on mobile/tablet */}
-      {!isDesktop && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20">
-          <Link href="/" className="flex flex-col items-center">
-            <Home size={24} />
-            <span className="text-xs">Home</span>
-          </Link>
-          <Link href="/saved-hostels" className="flex flex-col items-center">
-            <Heart size={24} />
-            <span className="text-xs">Saved Hostels</span>
-          </Link>
-          <Link href="/hostels" className="flex flex-col items-center">
-            <BookOpen size={24} className="text-[#5A00F0]" />
-            <span className="text-xs text-[#5A00F0]">Hostels/PG's</span>
-          </Link>
-          <Link href="/auth/login" className="flex flex-col items-center">
-            <User size={24} />
-            <span className="text-xs">Account</span>
-          </Link>
-        </div>
-      )}
+      {/* Mobile Navigation */}
+      <MobileNav />
     </div>
   )
 }

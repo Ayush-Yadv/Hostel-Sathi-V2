@@ -19,7 +19,7 @@ export default function MobileNav() {
   }, [])
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20 lg:hidden">
       <Link href="/" className={`flex flex-col items-center ${pathname === "/" ? "text-[#5A00F0]" : ""}`}>
         <Home size={20} />
         <span className="text-xs">Home</span>
