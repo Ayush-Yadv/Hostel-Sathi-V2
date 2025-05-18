@@ -2,14 +2,12 @@ import type React from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import JsonLd, { getOrganizationSchema } from '@/components/json-ld'
+import { defaultMetadata } from '@/utils/metadata'
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "Hostel Sathi - Find Affordable Hostels and PGs Near colleges in India",
-  description: "Hostel Sathi is a platform for discovering affordable hostels and PGs near colleges. currently in Greater Noida, India.",
-    generator: 'Next.js'
-}
+export const metadata = defaultMetadata
 
 export default function RootLayout({
   children,
@@ -18,6 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <JsonLd data={getOrganizationSchema()} />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
