@@ -37,6 +37,9 @@ import { saveHostel as saveHostelToFirebase, getSavedHostels, removeHostel } fro
 import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
+import { saveContactForm } from '../lib/contactform';
+import { toast } from 'react-hot-toast'; // Ass
+import ContactForm from "@/components/ui/contactform"
 
 export default function HomePage() {
   const router = useRouter()
@@ -61,6 +64,9 @@ export default function HomePage() {
 
   // Handle window resize
   const [isDesktop, setIsDesktop] = useState(false)
+
+
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -252,9 +258,74 @@ export default function HomePage() {
     router.push("/contact-thank-you")
   }
 
+
+
+
   // Filter hostels and PGs
   const featuredHostels = hostelsList.filter((hostel) => hostel.type === "hostel").slice(0, 3)
   const featuredPGs = hostelsList.filter((hostel) => hostel.type === "pg").slice(0, 3)
+
+
+
+  // function for th contact form 
+
+
+  //  const ContactForm = () =>  {
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   phone: '',
+  //   college: '',
+  //   message: ''
+  // });
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  //   const { id, value } = e.target;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     [id]: value
+  //   }));
+  // };
+
+  // const handleContactSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+    
+  //   // Basic validation
+  //   if (!formData.name || !formData.phone || !formData.message) {
+  //     toast.error('Please fill in all required fields');
+  //     return;
+  //   }
+    
+  //   setIsSubmitting(true);
+    
+  //   try {
+  //     const result = await saveContactForm({
+  //       name: formData.name,
+  //       phone: formData.phone,
+  //       college: formData.college,
+  //       message: formData.message
+  //     });
+      
+  //     if (result.success) {
+  //       toast.success('Your message has been sent successfully!');
+  //       // Reset form after successful submission
+  //       setFormData({
+  //         name: '',
+  //         phone: '',
+  //         college: '',
+  //         message: ''
+  //       });
+  //     } else {
+  //       toast.error(result.error || 'Failed to send message. Please try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Contact form submission error:', error);
+  //     toast.error('An unexpected error occurred. Please try again later.');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+  // }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -790,71 +861,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Contact Us Form */}
-        <section id="contact-form" className="py-10 px-4 bg-gradient-to-r from-[#5A00F0]/10 to-[#B366FF]/10">
-          <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 md:max-w-2xl lg:max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center">Contact Us</h2>
-
-            <form onSubmit={handleContactSubmit} className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-              <div className="md:col-span-1">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div className="md:col-span-1">
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Contact Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                  placeholder="Your phone number"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label htmlFor="college" className="block text-sm font-medium text-gray-700 mb-1">
-                  College
-                </label>
-                <input
-                  type="text"
-                  id="college"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                  placeholder="Your college name"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                  placeholder="Your message"
-                ></textarea>
-              </div>
-
-              <div className="md:col-span-2">
-                <button
-                  type="submit"
-                  className="w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2"
-                >
-                  Submit <Send size={16} />
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
+        {/* contact use form component  */}
+        
+        <ContactForm/>
+        {/* /////////////////////////////////// */}
 
         {/* Student Experience Section - Revamped */}
         <section className="py-10 px-4 bg-gray-50">
@@ -1060,3 +1070,4 @@ export default function HomePage() {
     </div>
   )
 }
+

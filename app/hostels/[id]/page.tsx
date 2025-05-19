@@ -25,7 +25,6 @@ import {
   Home,
   Heart,
   BookOpen,
-  User,
   X,
   ArrowLeft,
   Wifi,
