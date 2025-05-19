@@ -1,5 +1,5 @@
 export type HostelType = "hostel" | "pg"
-export type GenderType = "boys" | "girls" | "co-ed"
+export type GenderType = "boys" | "girls" 
 
 export interface Hostel {
   id: number
@@ -21,7 +21,7 @@ export interface Hostel {
 export const hostelsList: Hostel[] = [
   {
     id: 1,
-    name: "Sunrise Hostel",
+    name: "RGHs",
     price: 8000,
     distance: {
       GCET: 0.5,
@@ -31,13 +31,12 @@ export const hostelsList: Hostel[] = [
       ABES: 2.0,
       KIET: 2.5,
       ITS: 1.8,
-      BIMTECH: 3.0,
       "Sharda University": 2.2,
       Other: 1.5,
     },
     address: "123 College Road, Greater Noida",
     description:
-      "Sunrise Hostel offers comfortable accommodation for students with all modern amenities. Located close to major colleges, it provides a conducive environment for studies.",
+      "RGHs Hostel offers comfortable accommodation for students with all modern amenities. Located close to major colleges, it provides a conducive environment for studies.",
     amenities: ["WiFi", "AC Rooms", "Laundry", "Mess", "Power Backup", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.5,
@@ -47,7 +46,7 @@ export const hostelsList: Hostel[] = [
   },
   {
     id: 2,
-    name: "Royal PG",
+    name: "RAHs",
     price: 7500,
     distance: {
       GCET: 0.8,
@@ -63,17 +62,17 @@ export const hostelsList: Hostel[] = [
     },
     address: "45 Knowledge Park, Greater Noida",
     description:
-      "Royal PG is a premium paying guest accommodation with spacious rooms and excellent facilities. It's ideal for students looking for a home away from home.",
+      "RAHsis a premium paying guest accommodation with spacious rooms and excellent facilities. It's ideal for students looking for a home away from home.",
     amenities: ["WiFi", "AC Rooms", "Gym", "Mess", "TV Lounge", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.2,
     reviews: 85,
     type: "pg",
-    gender: "co-ed",
+    gender: "boys",
   },
   {
     id: 3,
-    name: "Student Haven",
+    name: "SNHs",
     price: 6500,
     distance: {
       GCET: 1.0,
@@ -89,17 +88,17 @@ export const hostelsList: Hostel[] = [
     },
     address: "78 Alpha Commercial Belt, Greater Noida",
     description:
-      "Student Haven provides affordable accommodation with all necessary facilities. The hostel focuses on creating a friendly and supportive community for students.",
+      "SNHs provides affordable accommodation with all necessary facilities. The hostel focuses on creating a friendly and supportive community for students.",
     amenities: ["WiFi", "Laundry", "Mess", "Study Room", "Power Backup", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.0,
     reviews: 95,
     type: "hostel",
-    gender: "girls",
+    gender: "boys",
   },
   {
     id: 4,
-    name: "Campus Edge",
+    name: "WHTHs",
     price: 9000,
     distance: {
       GCET: 0.3,
@@ -115,7 +114,7 @@ export const hostelsList: Hostel[] = [
     },
     address: "22 Beta-1, Greater Noida",
     description:
-      "Campus Edge is a premium hostel located right next to major educational institutions. It offers luxurious rooms with all modern amenities for a comfortable stay.",
+      "WHTHs is a premium hostel located right next to major educational institutions. It offers luxurious rooms with all modern amenities for a comfortable stay.",
     amenities: ["WiFi", "AC Rooms", "Gym", "Swimming Pool", "Mess", "Laundry", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.7,
@@ -125,7 +124,7 @@ export const hostelsList: Hostel[] = [
   },
   {
     id: 5,
-    name: "Scholar's Nest",
+    name: "RKSHs",
     price: 7000,
     distance: {
       GCET: 0.9,
@@ -141,17 +140,17 @@ export const hostelsList: Hostel[] = [
     },
     address: "56 Gamma-II, Greater Noida",
     description:
-      "Scholar's Nest is designed specifically for students who prioritize academics. It provides a quiet and conducive environment for studies with all necessary facilities.",
+      "RAKSHs is designed specifically for students who prioritize academics. It provides a quiet and conducive environment for studies with all necessary facilities.",
     amenities: ["WiFi", "Study Rooms", "Library", "Mess", "Power Backup", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.3,
     reviews: 110,
     type: "hostel",
-    gender: "girls",
+    gender: "boys",
   },
   {
     id: 6,
-    name: "Comfort Zone PG",
+    name: "BLUHs",
     price: 8500,
     distance: {
       GCET: 1.2,
@@ -167,7 +166,7 @@ export const hostelsList: Hostel[] = [
     },
     address: "34 Chi-IV, Greater Noida",
     description:
-      "Comfort Zone PG offers a homely environment with all modern amenities. The PG is known for its cleanliness, good food, and friendly staff.",
+      "BLUHs Hosteloffers a homely environment with all modern amenities. The PG is known for its cleanliness, good food, and friendly staff.",
     amenities: ["WiFi", "AC Rooms", "Homely Food", "Laundry", "TV Lounge", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.4,
@@ -177,7 +176,7 @@ export const hostelsList: Hostel[] = [
   },
   {
     id: 7,
-    name: "Green View Hostel",
+    name: "MAGHs",
     price: 7200,
     distance: {
       GCET: 1.1,
@@ -199,11 +198,11 @@ export const hostelsList: Hostel[] = [
     rating: 4.1,
     reviews: 90,
     type: "hostel",
-    gender: "co-ed",
+    gender: "girls",
   },
   {
     id: 8,
-    name: "Tech Hub PG",
+    name: "RKHs",
     price: 8800,
     distance: {
       GCET: 0.7,
@@ -225,11 +224,11 @@ export const hostelsList: Hostel[] = [
     rating: 4.6,
     reviews: 140,
     type: "pg",
-    gender: "boys",
+    gender: "girls",
   },
   {
     id: 9,
-    name: "Budget Stay",
+    name: "JITHs",
     price: 6000,
     distance: {
       GCET: 1.3,
@@ -251,8 +250,160 @@ export const hostelsList: Hostel[] = [
     rating: 3.9,
     reviews: 75,
     type: "pg",
-    gender: "co-ed",
+    gender: "girls",
   },
+  {
+    id: 10,
+    name: "MohanHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "12 Omega-I, Greater Noida",
+    description:
+      "MohanHs PG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "girls",
+  }, {
+    id: 11,
+    name: "MohanHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "89 Delta-I, Greater Noida",
+    description:
+      "MohanHsPG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "boys",
+  }, {
+    id: 13,
+    name: "SineHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "12 Omega-I, Greater Noida",
+    description:
+      "SineHs PG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "boys",
+  }, {
+    id: 14,
+    name: "VIRNDAHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "67 Xu-III, Greater Noida",
+    description:
+      "VIRNDAHs PG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "boys",
+  }, {
+    id: 15,
+    name: "VIJAYHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "89 Delta-I, Greater Noida",
+    description:
+      "VIJAYHs PG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "girls",
+  }, {
+    id: 16,
+    name: "MANYAHs",
+    price: 8800,
+    distance: {
+      GCET: 0.7,
+      NIET: 0.4,
+      "G L BAJAJ": 1.1,
+      GNIOT: 0.6,
+      ABES: 1.3,
+      KIET: 1.9,
+      ITS: 1.1,
+      BIMTECH: 2.3,
+      "Sharda University": 1.6,
+      Other: 1.1,
+    },
+    address: "89 Delta-I, Greater Noida",
+    description:
+      "ManyaHs PG is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
+    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
+    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    rating: 4.6,
+    reviews: 140,
+    type: "pg",
+    gender: "girls",
+  }
+  
 ]
 
 // Function to shuffle array (for random order of hostels)

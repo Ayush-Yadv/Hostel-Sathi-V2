@@ -3,6 +3,7 @@ import type { User } from "firebase/auth"
 import { useState, useEffect, SetStateAction } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import {
   ArrowLeft,
   Check,
@@ -20,39 +21,29 @@ import {
   Bed,
   AlertTriangle,
 } from "lucide-react"
-import { onAuthChange, checkIsAdmin } from "@/lib/auth"
 import { getPendingProperties, approveProperty, rejectProperty, PropertyData} from "@/lib/propertyListings"
 
 export default function PendingPropertiesPage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [properties, setProperties] = useState<PropertyData[]>([])
   const [actionLoading, setActionLoading] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState<PropertyData | null>(null);
   const [error, setError] = useState("")
+  const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in using Firebase Auth
-    const unsubscribe = onAuthChange(async (currentUser) => {
-      setUser(currentUser)
+    // Check if admin is logged in from session storage
+    const isAdminLoggedIn = sessionStorage.getItem('isAdminLoggedIn')
+    
+    if (isAdminLoggedIn !== 'true') {
+      // If not logged in as admin, redirect to login
+      router.push('/auth/login?redirect=/admin/pending-properties')
+      return
+    }
 
-      if (currentUser) {
-        // Check if the user is an admin
-        const adminStatus = await checkIsAdmin(currentUser.uid)
-        setIsAdmin(adminStatus)
-
-        if (adminStatus) {
-          // Only fetch properties if user is an admin
-          fetchPendingProperties()
-        }
-      }
-
-      setLoading(false)
-    })
-
-    return unsubscribe
-  }, [])
+    // Fetch pending properties
+    fetchPendingProperties()
+  }, [router])
 
   const fetchPendingProperties = async () => {
     try {
@@ -128,31 +119,16 @@ export default function PendingPropertiesPage() {
     setSelectedProperty(null)
   }
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdminLoggedIn')
+    router.push('/auth/login?redirect=/admin/pending-properties')
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-[#5A00F0]" />
         <span className="ml-2 text-lg">Loading...</span>
-      </div>
-    )
-  }
-
-  // Check if the user is an admin
-  if (!isAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <AlertTriangle size={64} className="text-yellow-500 mb-4" />
-        <h1 className="text-2xl font-bold mb-4">Admin Access Required</h1>
-        <p className="text-gray-600 mb-6 text-center max-w-md">
-          You need to have admin privileges to access this page. Please contact the system administrator if you believe
-          you should have access.
-        </p>
-        <Link
-          href="/"
-          className="bg-[#8300FF] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#7000DD] transition"
-        >
-          Return to Home
-        </Link>
       </div>
     )
   }
@@ -172,6 +148,12 @@ export default function PendingPropertiesPage() {
             <h1 className="ml-2 text-lg font-bold">Admin Dashboard</h1>
           </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className="text-red-500 hover:text-red-600 font-medium"
+        >
+          Logout
+        </button>
       </header>
 
       {/* Main Content */}

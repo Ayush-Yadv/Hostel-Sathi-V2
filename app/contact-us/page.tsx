@@ -1,68 +1,88 @@
 "use client"
 
-import { ChangeEvent } from "react";
-import { useState, useEffect } from "react"
-import Link from "next/link"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, MapPin, Phone, Mail, Send } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { Loader2 } from "lucide-react"
+import { db } from "@/lib/firebase"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import CommonNavbar from "@/components/common-navbar"
 import CommonFooter from "@/components/common-footer"
 import WhatsAppButton from "@/components/whatsapp-button"
 import MobileNav from "@/components/mobile-nav"
+<<<<<<< Updated upstream
 import ContactForm from "@/components/ui/contactform";
+=======
+import { toast } from "sonner"
+
+// Form validation schema
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  college: z.string().min(2, "College name must be at least 2 characters"),
+  contact: z.string()
+    .regex(/^(\+91|0)?[6789]\d{9}$/, "Please enter a valid Indian phone number")
+    .transform((val) => (val.startsWith("+91") ? val : `+91${val}`)),
+  message: z.string().min(10, "Message must be at least 10 characters")
+})
+
+type ContactFormData = z.infer<typeof contactFormSchema>
+>>>>>>> Stashed changes
 
 export default function ContactUsPage() {
   const router = useRouter()
-  const [isDesktop, setIsDesktop] = useState(false)
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  })
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      college: "",
+      contact: "",
+      message: ""
     }
+  })
 
-    // Set initial value
-    handleResize()
-
-    // Add event listener
-    window.addEventListener("resize", handleResize)
-
-    // Clean up
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  const handleChange = (e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const onSubmit = async (data: ContactFormData) => {
     setLoading(true)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      // Add document to Firestore
+      const docRef = await addDoc(collection(db, "contacts"), {
+        ...data,
+        createdAt: serverTimestamp(),
+        status: "new",
+        source: "contact_form"
+      })
+
+      console.log("Document written with ID: ", docRef.id)
+      
+      // Show success message
+      toast.success("Form submitted successfully!")
+      
+      // Reset form
+      reset()
+
+      // Redirect to thank you page
       router.push("/contact-thank-you")
-    }, 1000)
+    } catch (error) {
+      console.error("Error adding document: ", error)
+      toast.error("Error submitting form. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <CommonNavbar />
 
-      {/* Main Content */}
       <main className="flex-1 bg-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-[#5A00F0] to-[#B366FF] py-16 px-4 text-white">
@@ -74,66 +94,114 @@ export default function ContactUsPage() {
           </div>
         </section>
 
-        {/* Contact Information Section */}
-        <section className="py-12 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-[#5A00F0]/10 rounded-full flex items-center justify-center mb-4">
-                  <MapPin className="text-[#5A00F0]" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Our Location</h3>
-                <p className="text-gray-600">
-                  123 College Road, Knowledge Park
-                  <br />
-                  Greater Noida, Uttar Pradesh 201310
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-[#5A00F0]/10 rounded-full flex items-center justify-center mb-4">
-                  <Phone className="text-[#5A00F0]" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Phone Number</h3>
-                <p className="text-gray-600">+91 98765 43210</p>
-                <p className="text-gray-600 mt-1">Mon-Fri, 9am-6pm</p>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-[#5A00F0]/10 rounded-full flex items-center justify-center mb-4">
-                  <Mail className="text-[#5A00F0]" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Email Address</h3>
-                <p className="text-gray-600">info@hostelsathi.com</p>
-                <p className="text-gray-600 mt-1">We respond within 24 hours</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Contact Form Section */}
+<<<<<<< Updated upstream
         <ContactForm/>
 
         {/* Map Section */}
+=======
+>>>>>>> Stashed changes
         <section className="py-12 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div className="h-96 bg-gray-200 flex items-center justify-center">
-                <p className="text-gray-500">Map will be displayed here</p>
-                {/* In a real implementation, you would embed a Google Map or similar here */}
+          <div className="max-w-md mx-auto">
+            <form 
+              onSubmit={handleSubmit(onSubmit)} 
+              className="bg-white rounded-lg shadow-md p-6 space-y-6"
+            >
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  {...register("name")}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="John Doe"
+                />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+                )}
               </div>
-            </div>
+
+              <div>
+                <label htmlFor="college" className="block text-sm font-medium text-gray-700 mb-1">
+                  Your College
+                </label>
+                <input
+                  type="text"
+                  id="college"
+                  {...register("college")}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
+                    errors.college ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="College Name"
+                />
+                {errors.college && (
+                  <p className="mt-1 text-sm text-red-500">{errors.college.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
+                  Contact Number
+                </label>
+                <input
+                  type="tel"
+                  id="contact"
+                  {...register("contact")}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
+                    errors.contact ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="+91 98765 43210"
+                />
+                {errors.contact && (
+                  <p className="mt-1 text-sm text-red-500">{errors.contact.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  {...register("message")}
+                  rows={4}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
+                    errors.message ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="Your message here..."
+                />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-500">{errors.message.message}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2 ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </button>
+            </form>
           </div>
         </section>
       </main>
 
-      {/* WhatsApp Button */}
       <WhatsAppButton />
-
-      {/* Footer */}
       <CommonFooter />
-
-      {/* Mobile Navigation */}
       <MobileNav />
     </div>
   )

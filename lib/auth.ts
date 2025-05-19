@@ -368,11 +368,25 @@ export const isUserLoggedIn = () => {
 // Check if user is admin
 export const checkIsAdmin = async (userId: string) => {
   try {
-    const userDoc = await getDoc(doc(db, "users", userId))
-    if (userDoc.exists()) {
-      return userDoc.data()?.isAdmin === true
+    // First check if user is in the hardcoded admin list
+    const currentUser = auth.currentUser;
+    
+    // List of hardcoded admin credentials
+    const adminCredentials = [
+      { email: "admin1@hostelsathi.com", password: "Admin@123" },
+      { email: "admin2@hostelsathi.com", password: "Admin@123" },
+      { email: "admin3@hostelsathi.com", password: "Admin@123" },
+      { email: "admin4@hostelsathi.com", password: "Admin@123" },
+      { email: "admin5@hostelsathi.com", password: "Admin@123" }
+    ];
+    
+    // If the current user's email is in the admin list, they are an admin
+    if (currentUser && currentUser.email) {
+      const isAdmin = adminCredentials.some(admin => admin.email === currentUser.email);
+      return isAdmin;
     }
-    return false
+    
+    return false;
   } catch (error) {
     console.error("Error checking admin status:", error)
     return false

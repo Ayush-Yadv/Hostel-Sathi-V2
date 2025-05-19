@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react"
 import { signIn } from "@/lib/auth"
 import type { ChangeEvent } from "react"
@@ -12,8 +12,20 @@ import CommonFooter from "@/components/common-footer"
 import WhatsAppButton from "@/components/whatsapp-button"
 import MobileNav from "@/components/mobile-nav"
 
+// Hardcoded admin credentials
+const ADMIN_CREDENTIALS = [
+  { email: "admin1@hostelsathi.com", password: "Admin@123" },
+  { email: "admin2@hostelsathi.com", password: "Admin@123" },
+  { email: "admin3@hostelsathi.com", password: "Admin@123" },
+  { email: "admin4@hostelsathi.com", password: "Admin@123" },
+  { email: "admin5@hostelsathi.com", password: "Admin@123" }
+];
+
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectPath = searchParams.get("redirect") || "/"
+  const isAdminRedirect = redirectPath.includes("/admin/")
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
@@ -46,17 +58,36 @@ export default function LoginPage() {
         throw new Error("Please fill in all fields")
       }
 
-      const { user, error } = await signIn(formData.email, formData.password)
+      if (isAdminRedirect) {
+        // Check against hardcoded admin credentials
+        const isValidAdmin = ADMIN_CREDENTIALS.some(
+          admin => admin.email === formData.email && admin.password === formData.password
+        )
 
-      if (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to sign in")
-      }
+        if (!isValidAdmin) {
+          throw new Error("Invalid admin credentials")
+        }
 
-      if (user) {
-        setSuccess("Successfully logged in!")
+        // Set admin login status in session storage
+        sessionStorage.setItem('isAdminLoggedIn', 'true')
+        setSuccess("Successfully logged in as admin!")
         setTimeout(() => {
-          router.push("/")
+          router.push(redirectPath)
         }, 1000)
+      } else {
+        // Handle regular user login with Firebase
+        const { user, error } = await signIn(formData.email, formData.password)
+
+        if (error) {
+          throw new Error(error instanceof Error ? error.message : "Failed to sign in")
+        }
+
+        if (user) {
+          setSuccess("Successfully logged in!")
+          setTimeout(() => {
+            router.push(redirectPath)
+          }, 1000)
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred")
@@ -86,6 +117,27 @@ export default function LoginPage() {
               <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
               <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
             </div>
+
+            {/* Admin Access Note */}
+            {isAdminRedirect && (
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
+                <h3 className="text-sm font-semibold text-blue-800 mb-1">Admin Access Required</h3>
+                <p className="text-xs text-blue-600 mb-2">
+                  You're trying to access an admin page. Only authorized admin accounts can access this section.
+                </p>
+                <p className="text-xs text-blue-600 mb-1">Admin accounts (Password: Admin@123):</p>
+                <ul className="text-xs list-disc list-inside text-blue-600">
+                  <li>admin1@hostelsathi.com</li>
+                  <li>admin2@hostelsathi.com</li>
+                  <li>admin3@hostelsathi.com</li>
+                  <li>admin4@hostelsathi.com</li>
+                  <li>admin5@hostelsathi.com</li>
+                </ul>
+                <p className="text-xs text-blue-600 mt-2">
+                  <strong>Note:</strong> All admin accounts use the same password for simplicity.
+                </p>
+              </div>
+            )}
 
             {/* Error/Success Messages */}
             {error && (
