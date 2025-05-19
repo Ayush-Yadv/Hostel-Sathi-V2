@@ -125,7 +125,7 @@ export const hostelsList: Hostel[] = [
   },
   {
     id: 5,
-    name: "RKSHs",
+    name: "RKHs",
     price: 12500,
     distance: {
       GCET: 0.9,
@@ -141,7 +141,7 @@ export const hostelsList: Hostel[] = [
     },
     address: "56 Gamma-II, Greater Noida",
     description:
-      "RAKSHs is designed specifically for students who prioritize academics. It provides a quiet and conducive environment for studies with all necessary facilities.",
+      "RKHs is designed specifically for students who prioritize academics. It provides a quiet and conducive environment for studies with all necessary facilities.",
     amenities: ["WiFi", "Study Rooms", "Library", "Mess", "Power Backup", "Security"],
     images: Array(10).fill("/placeholder.svg?height=300&width=400"),
     rating: 4.3,
@@ -203,32 +203,6 @@ export const hostelsList: Hostel[] = [
   },
   {
     id: 8,
-    name: "RKHs",
-    price: 13500,
-    distance: {
-      GCET: 0.7,
-      NIET: 0.4,
-      "G L BAJAJ": 1.1,
-      GNIOT: 0.6,
-      "Galgotia University": 1.3,
-      "Dronacharya Group of Institutions": 1.9,
-      ITS: 1.1,
-      "Amity University": 2.3,
-      "Sharda University": 1.6,
-      Other: 1.1,
-    },
-    address: "12 Omega-I, Greater Noida",
-    description:
-      "RKHs is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
-    amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
-    rating: 4.6,
-    reviews: 140,
-    type: "hostel",
-    gender: "boys",
-  },
-  {
-    id: 9,
     name: "RKHs Girls",
     price: 13500,
     distance: {
@@ -254,7 +228,7 @@ export const hostelsList: Hostel[] = [
     gender: "girls",
   },
   {
-    id: 10,
+    id: 9,
     name: "WHIHs",
     price: 13000,
     distance: {
@@ -280,7 +254,7 @@ export const hostelsList: Hostel[] = [
     gender: "girls",
   },
   {
-    id: 11,
+    id: 10,
     name: "JITGHs",
     price: 8000,
     distance: {
@@ -306,7 +280,7 @@ export const hostelsList: Hostel[] = [
     gender: "girls",
   },
   {
-    id: 12,
+    id: 11,
     name: "MohanHs",
     price: 6500,
     distance: {
@@ -332,7 +306,7 @@ export const hostelsList: Hostel[] = [
     gender: "boys",
   },
   {
-    id: 13,
+    id: 12,
     name: "MohanHs Girls",
     price: 6500,
     distance: {
@@ -358,7 +332,7 @@ export const hostelsList: Hostel[] = [
     gender: "girls",
   },
   {
-    id: 14,
+    id: 13,
     name: "SINHs",
     price: 7000,
     distance: {
@@ -384,7 +358,7 @@ export const hostelsList: Hostel[] = [
     gender: "boys",
   },
   {
-    id: 15,
+    id: 14,
     name: "VIJAYHs",
     price: 6000,
     distance: {
@@ -410,7 +384,7 @@ export const hostelsList: Hostel[] = [
     gender: "boys",
   },
   {
-    id: 16,
+    id: 15,
     name: "MANYAHs",
     price: 6000,
     distance: {
@@ -436,7 +410,7 @@ export const hostelsList: Hostel[] = [
     gender: "boys",
   },
   {
-    id: 17,
+    id: 16,
     name: "MANYAHs Girls",
     price: 6000,
     distance: {
@@ -462,7 +436,7 @@ export const hostelsList: Hostel[] = [
     gender: "girls",
   },
   {
-    id: 18,
+    id: 17,
     name: "OMHs",
     price: 7500,
     distance: {
@@ -488,7 +462,7 @@ export const hostelsList: Hostel[] = [
     gender: "boys",
   },
   {
-    id: 19,
+    id: 18,
     name: "PREHs",
     price: 7000,
     distance: {
