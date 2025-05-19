@@ -12,9 +12,6 @@ import CommonNavbar from "@/components/common-navbar"
 import CommonFooter from "@/components/common-footer"
 import WhatsAppButton from "@/components/whatsapp-button"
 import MobileNav from "@/components/mobile-nav"
-<<<<<<< Updated upstream
-import ContactForm from "@/components/ui/contactform";
-=======
 import { toast } from "sonner"
 
 // Form validation schema
@@ -28,7 +25,6 @@ const contactFormSchema = z.object({
 })
 
 type ContactFormData = z.infer<typeof contactFormSchema>
->>>>>>> Stashed changes
 
 export default function ContactUsPage() {
   const router = useRouter()
@@ -95,12 +91,6 @@ export default function ContactUsPage() {
         </section>
 
         {/* Contact Form Section */}
-<<<<<<< Updated upstream
-        <ContactForm/>
-
-        {/* Map Section */}
-=======
->>>>>>> Stashed changes
         <section className="py-12 px-4">
           <div className="max-w-md mx-auto">
             <form 
@@ -200,8 +190,8 @@ export default function ContactUsPage() {
         </section>
       </main>
 
-      <WhatsAppButton />
       <CommonFooter />
+      <WhatsAppButton />
       <MobileNav />
     </div>
   )
