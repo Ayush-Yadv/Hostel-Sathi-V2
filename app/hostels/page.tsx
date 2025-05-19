@@ -23,6 +23,8 @@ import {
   Users,
   Filter,
 } from "lucide-react"
+import { onAuthChange, signOut, getCurrentUser } from "@/lib/auth"
+import { saveHostel as saveHostelToFirebase, getSavedHostels, removeHostel } from "@/lib/savedHostels"
 import { hostelsList, type HostelType, type GenderType, type Hostel } from "@/data/hostels"
 import { collegesList } from "@/data/colleges"
 import CommonNavbar from "@/components/common-navbar"
@@ -68,20 +70,31 @@ export default function HostelsPage() {
     // Add event listener
     window.addEventListener("resize", handleResize)
 
-    // Check if user is logged in from localStorage
-    const loggedInStatus = localStorage.getItem("isLoggedIn")
-    if (loggedInStatus === "true") {
-      setIsLoggedIn(true)
-    }
-
-    // Get saved hostels from localStorage
-    const savedHostelsData = localStorage.getItem("savedHostels")
-    if (savedHostelsData) {
-      setSavedHostels(JSON.parse(savedHostelsData))
-    }
+    // Use Firebase auth state instead of localStorage
+    const unsubscribe = onAuthChange(async (user) => {
+      if (user) {
+        setIsLoggedIn(true)
+        
+        // Get saved hostels from Firestore instead of localStorage
+        try {
+          const result = await getSavedHostels(user.uid)
+          if (result.savedHostels) {
+            setSavedHostels(result.savedHostels)
+          }
+        } catch (error) {
+          console.error("Error fetching saved hostels:", error)
+        }
+      } else {
+        setIsLoggedIn(false)
+        setSavedHostels([])
+      }
+    })
 
     // Clean up
-    return () => window.removeEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      unsubscribe()
+    }
   }, [])
 
   // Load and filter hostels
@@ -115,11 +128,20 @@ export default function HostelsPage() {
   }
 
   // Handle login/logout
-  const handleAuthAction = () => {
+  const handleAuthAction = async () => {
     if (isLoggedIn) {
-      // Logout logic
-      localStorage.removeItem("isLoggedIn")
-      setIsLoggedIn(false)
+      // Logout logic using Firebase
+      try {
+        const result = await signOut()
+        if (result.success) {
+          setIsLoggedIn(false)
+          setSavedHostels([])
+        } else {
+          console.error("Error signing out:", result.error)
+        }
+      } catch (error) {
+        console.error("Error signing out:", error)
+      }
     } else {
       // Navigate to login page
       router.push("/auth/login")
@@ -145,7 +167,7 @@ export default function HostelsPage() {
   }
 
   // Toggle save hostel
-  const toggleSaveHostel = (id: number, e: React.MouseEvent) => {
+  const toggleSaveHostel = async (id: number, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -154,16 +176,36 @@ export default function HostelsPage() {
       return
     }
 
-    let updatedSavedHostels: number[]
-
-    if (savedHostels.includes(id)) {
-      updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
-    } else {
-      updatedSavedHostels = [...savedHostels, id]
+    const currentUser = getCurrentUser()
+    if (!currentUser) {
+      console.error("No user found despite isLoggedIn being true")
+      router.push("/auth/login")
+      return
     }
 
-    setSavedHostels(updatedSavedHostels)
-    localStorage.setItem("savedHostels", JSON.stringify(updatedSavedHostels))
+    try {
+      if (savedHostels.includes(id)) {
+        // Remove from saved hostels
+        const result = await removeHostel(currentUser.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
+          setSavedHostels(updatedSavedHostels)
+        } else {
+          console.error("Error removing hostel:", result.error)
+        }
+      } else {
+        // Add to saved hostels
+        const result = await saveHostelToFirebase(currentUser.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = [...savedHostels, id]
+          setSavedHostels(updatedSavedHostels)
+        } else {
+          console.error("Error saving hostel:", result.error)
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling saved hostel:", error)
+    }
   }
 
   // Toggle filters visibility

@@ -32,7 +32,8 @@ import {
 } from "lucide-react"
 import { collegesList } from "@/data/colleges"
 import { hostelsList } from "@/data/hostels"
-import { onAuthChange, signOut } from "@/lib/auth"
+import { onAuthChange, signOut, getCurrentUser } from "@/lib/auth"
+import { saveHostel as saveHostelToFirebase, getSavedHostels, removeHostel } from "@/lib/savedHostels"
 import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
@@ -73,16 +74,24 @@ export default function HomePage() {
     window.addEventListener("resize", handleResize)
 
     // Check auth state
-    const unsubscribe = onAuthChange((user) => {
+    const unsubscribe = onAuthChange(async (user) => {
       setIsLoggedIn(!!user)
       setCurrentUser(user)
+      
+      if (user) {
+        // Get saved hostels from Firestore instead of localStorage
+        try {
+          const result = await getSavedHostels(user.uid)
+          if (result.savedHostels) {
+            setSavedHostels(result.savedHostels)
+          }
+        } catch (error) {
+          console.error("Error fetching saved hostels:", error)
+        }
+      } else {
+        setSavedHostels([])
+      }
     })
-
-    // Get saved hostels from localStorage
-    const savedHostelsData = localStorage.getItem("savedHostels")
-    if (savedHostelsData) {
-      setSavedHostels(JSON.parse(savedHostelsData))
-    }
 
     // Improved scroll animation for the path in "What is Hostel Sathi" section
     const handleScroll = () => {
@@ -195,7 +204,7 @@ export default function HomePage() {
   }
 
   // Toggle save hostel
-  const toggleSaveHostel = (id: number, e: React.MouseEvent) => {
+  const toggleSaveHostel = async (id: number, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -204,16 +213,36 @@ export default function HomePage() {
       return
     }
 
-    let updatedSavedHostels: number[]
-
-    if (savedHostels.includes(id)) {
-      updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
-    } else {
-      updatedSavedHostels = [...savedHostels, id]
+    const currentUser = getCurrentUser()
+    if (!currentUser) {
+      console.error("No user found despite isLoggedIn being true")
+      router.push("/auth/login")
+      return
     }
 
-    setSavedHostels(updatedSavedHostels)
-    localStorage.setItem("savedHostels", JSON.stringify(updatedSavedHostels))
+    try {
+      if (savedHostels.includes(id)) {
+        // Remove from saved hostels
+        const result = await removeHostel(currentUser.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
+          setSavedHostels(updatedSavedHostels)
+        } else {
+          console.error("Error removing hostel:", result.error)
+        }
+      } else {
+        // Add to saved hostels
+        const result = await saveHostelToFirebase(currentUser.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = [...savedHostels, id]
+          setSavedHostels(updatedSavedHostels)
+        } else {
+          console.error("Error saving hostel:", result.error)
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling saved hostel:", error)
+    }
   }
 
   // Handle contact form submission
@@ -395,7 +424,7 @@ export default function HomePage() {
                   style={{ transform: `translateX(-${activeSlide * 100}%)` }}
                 >
                   {/* Carousel slides */}
-                  <div className="carousel-slide min-w-full p-6 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
+                  <div className="carousel-slide min-w-full p-10 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0">
                         <h2 className="text-white text-2xl font-bold mb-4">

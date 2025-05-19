@@ -11,6 +11,8 @@ import CommonNavbar from "@/components/common-navbar"
 import CommonFooter from "@/components/common-footer"
 import WhatsAppButton from "@/components/whatsapp-button"
 import MobileNav from "@/components/mobile-nav"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 declare global {
   interface Window {
@@ -21,6 +23,7 @@ declare global {
 
 export default function SignupPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -29,6 +32,7 @@ export default function SignupPage() {
     phoneNumber: "",
     otp: "",
   })
+  // We'll keep these state variables for internal tracking but use toast for display
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -65,6 +69,11 @@ export default function SignupPage() {
 
     try {
       if (!formData.phoneNumber) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please enter your phone number",
+        })
         throw new Error("Please enter your phone number")
       }
 
@@ -75,26 +84,60 @@ export default function SignupPage() {
       }
 
       // Initialize reCAPTCHA verifier
-      if (!window.recaptchaVerifier && recaptchaContainerRef.current) {
-        const { verifier, error } = initRecaptchaVerifier("recaptcha-container")
-        if (error) {
-          throw new Error("Failed to initialize reCAPTCHA")
+      if (!window.recaptchaVerifier) {
+        try {
+          console.log("Initializing reCAPTCHA verifier...");
+          const { verifier, error } = initRecaptchaVerifier("recaptcha-container");
+          
+          if (error) {
+            console.error("Failed to initialize reCAPTCHA:", error);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Failed to initialize reCAPTCHA",
+            });
+            throw new Error("Failed to initialize reCAPTCHA");
+          }
+          
+          console.log("reCAPTCHA verifier initialized successfully");
+          window.recaptchaVerifier = verifier;
+        } catch (error) {
+          console.error("Exception initializing reCAPTCHA:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to initialize reCAPTCHA. Please refresh the page and try again.",
+          });
+          throw new Error("Failed to initialize reCAPTCHA");
         }
+      } else {
+        console.log("Using existing reCAPTCHA verifier");
       }
 
       const { success, error } = await sendOTP(phoneNumber)
 
       if (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to send OTP")
+        const errorMessage = error instanceof Error ? error.message : "Failed to send OTP"
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+        })
+        throw new Error(errorMessage)
       }
 
       if (success) {
         setOtpSent(true)
         setSuccess("OTP sent successfully!")
+        toast({
+          title: "Success",
+          description: "OTP sent successfully!",
+        })
         setCountdown(30) // 30 seconds countdown for resend
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred"
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -108,21 +151,37 @@ export default function SignupPage() {
 
     try {
       if (!formData.otp) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please enter the OTP",
+        })
         throw new Error("Please enter the OTP")
       }
 
       const { success, user, error } = await verifyOTP(formData.otp)
 
       if (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to verify OTP")
+        const errorMessage = error instanceof Error ? error.message : "Failed to verify OTP"
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+        })
+        throw new Error(errorMessage)
       }
 
       if (success && user) {
         setPhoneVerified(true)
         setSuccess("Phone number verified successfully!")
+        toast({
+          title: "Success",
+          description: "Phone number verified successfully!",
+        })
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred"
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -136,27 +195,86 @@ export default function SignupPage() {
 
     try {
       if (!phoneVerified) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please verify your phone number first",
+        })
         throw new Error("Please verify your phone number first")
       }
 
       if (!formData.name || !formData.email || !formData.password || !formData.phoneNumber) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please fill in all fields",
+        })
         throw new Error("Please fill in all fields")
       }
 
+      console.log("Submitting signup form with data:", {
+        email: formData.email,
+        name: formData.name,
+        phoneNumber: formData.phoneNumber,
+        // Don't log password for security
+      });
+      
       const { user, error } = await signUp(formData.email, formData.password, formData.name, formData.phoneNumber)
 
       if (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to sign up")
+        // Handle specific Firebase errors
+        let errorMessage = "Failed to sign up"
+        
+        if (error instanceof Error) {
+          errorMessage = error.message
+          console.error("Signup error:", error);
+          
+          // Check for specific Firebase error codes
+          if (error.message.includes("auth/email-already-in-use")) {
+            errorMessage = "This email is already registered. Please use a different email or login."
+          } else if (error.message.includes("auth/invalid-email")) {
+            errorMessage = "Invalid email format. Please enter a valid email address."
+          } else if (error.message.includes("auth/weak-password")) {
+            errorMessage = "Password is too weak. Please use a stronger password."
+          } else if (error.message.includes("firestore")) {
+            // If it's a Firestore error but auth succeeded, we can still proceed
+            console.warn("Firestore error but continuing:", error);
+            // Don't throw, just show a warning
+            toast({
+              variant: "default",
+              title: "Account Created",
+              description: "Your account was created but there was an issue saving some details. You can update them later.",
+            });
+            // Return early to avoid the error
+            setTimeout(() => {
+              router.push("/")
+            }, 1000);
+            return;
+          }
+        }
+        
+        toast({
+          variant: "destructive",
+          title: "Sign Up Failed",
+          description: errorMessage,
+        })
+        
+        throw new Error(errorMessage)
       }
 
       if (user) {
         setSuccess("Successfully signed up!")
+        toast({
+          title: "Success",
+          description: "Your account has been created successfully!",
+        })
         setTimeout(() => {
           router.push("/")
         }, 1000)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred"
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -184,17 +302,7 @@ export default function SignupPage() {
               <p className="mt-2 text-sm text-gray-600">Join Hostel Sathi today</p>
             </div>
 
-            {/* Error/Success Messages */}
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-                {success}
-              </div>
-            )}
+            {/* We've replaced these with toast messages */}
 
             {/* Form */}
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -366,7 +474,7 @@ export default function SignupPage() {
             </div>
 
             {/* reCAPTCHA Container */}
-            <div id="recaptcha-container" ref={recaptchaContainerRef}></div>
+            <div id="recaptcha-container" ref={recaptchaContainerRef} className="mt-4 flex justify-center"></div>
           </div>
         </div>
       </main>
@@ -379,6 +487,9 @@ export default function SignupPage() {
 
       {/* Mobile Navigation */}
       <MobileNav />
+      
+      {/* Toast Messages */}
+      <Toaster />
     </div>
   )
 } 

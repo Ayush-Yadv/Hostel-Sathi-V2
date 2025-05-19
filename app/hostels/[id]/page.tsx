@@ -9,6 +9,13 @@ import CommonNavbar from "@/components/common-navbar"
 import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
+import { onAuthChange, getCurrentUser, signOut } from "@/lib/auth"
+import { saveBooking } from "@/lib/bookings"
+import { saveHostel as saveHostelToFirebase, removeHostel, getSavedHostels } from "@/lib/savedHostels"
+import { toast } from "sonner"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { User } from "firebase/auth"
 
 import {
   Menu,
@@ -55,9 +62,19 @@ export default function HostelDetailsPage() {
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   // State for saved hostels
   const [savedHostels, setSavedHostels] = useState<number[]>([])
+  
+  // State for booking form
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    phone: "",
+    college: collegeParam || "",
+    message: ""
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // State for reviews
   interface ReviewType {
@@ -85,20 +102,36 @@ export default function HostelDetailsPage() {
     // Add event listener
     window.addEventListener("resize", handleResize)
 
-    // Check if user is logged in from localStorage
-    const loggedInStatus = localStorage.getItem("isLoggedIn")
-    if (loggedInStatus === "true") {
-      setIsLoggedIn(true)
-    }
-
-    // Get saved hostels from localStorage
-    const savedHostelsData = localStorage.getItem("savedHostels")
-    if (savedHostelsData) {
-      setSavedHostels(JSON.parse(savedHostelsData))
-    }
+    // Use Firebase auth state instead of localStorage
+    const unsubscribe = onAuthChange(async (user) => {
+      if (user) {
+        setIsLoggedIn(true)
+        setCurrentUser(user)
+        
+        // Get saved hostels from Firestore
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid))
+          if (userDoc.exists()) {
+            const userData = userDoc.data()
+            if (userData.savedHostels) {
+              setSavedHostels(userData.savedHostels)
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching saved hostels:", error)
+        }
+      } else {
+        setIsLoggedIn(false)
+        setCurrentUser(null)
+        setSavedHostels([])
+      }
+    })
 
     // Clean up
-    return () => window.removeEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      unsubscribe()
+    }
   }, [])
 
   // Load hostel data
@@ -193,19 +226,31 @@ export default function HostelDetailsPage() {
   }
 
   // Handle login/logout
-  const handleAuthAction = () => {
+  const handleAuthAction = async () => {
     if (isLoggedIn) {
-      // Logout logic
-      localStorage.removeItem("isLoggedIn")
-      setIsLoggedIn(false)
+      // Logout logic using Firebase
+      try {
+        await signOut()
+        setIsLoggedIn(false)
+        setCurrentUser(null)
+        setSavedHostels([])
+        toast.success("Logged out successfully")
+      } catch (error) {
+        console.error("Error signing out:", error)
+        toast.error("Failed to log out")
+      }
     } else {
       // Navigate to login page
+      localStorage.setItem(
+        "redirectAfterLogin",
+        `/hostels/${id}${collegeParam ? `?college=${encodeURIComponent(collegeParam)}` : ""}`,
+      )
       router.push("/auth/login")
     }
   }
 
   // Toggle save hostel
-  const toggleSaveHostel = () => {
+  const toggleSaveHostel = async () => {
     if (!isLoggedIn) {
       // Store the current page URL for redirection after login
       localStorage.setItem(
@@ -216,16 +261,41 @@ export default function HostelDetailsPage() {
       return
     }
 
-    let updatedSavedHostels: number[]
-
-    if (savedHostels.includes(id)) {
-      updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
-    } else {
-      updatedSavedHostels = [...savedHostels, id]
+    const currentUserObj = getCurrentUser()
+    if (!currentUserObj) {
+      console.error("No user found despite isLoggedIn being true")
+      router.push("/auth/login")
+      return
     }
 
-    setSavedHostels(updatedSavedHostels)
-    localStorage.setItem("savedHostels", JSON.stringify(updatedSavedHostels))
+    try {
+      if (savedHostels.includes(id)) {
+        // Remove from saved hostels
+        const result = await removeHostel(currentUserObj.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = savedHostels.filter((hostelId) => hostelId !== id)
+          setSavedHostels(updatedSavedHostels)
+          toast.success("Removed from saved hostels")
+        } else {
+          console.error("Error removing hostel:", result.error)
+          toast.error("Failed to remove from saved hostels")
+        }
+      } else {
+        // Add to saved hostels
+        const result = await saveHostelToFirebase(currentUserObj.uid, id)
+        if (result.success) {
+          const updatedSavedHostels = [...savedHostels, id]
+          setSavedHostels(updatedSavedHostels)
+          toast.success("Added to saved hostels")
+        } else {
+          console.error("Error saving hostel:", result.error)
+          toast.error("Failed to add to saved hostels")
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling saved hostel:", error)
+      toast.error("Failed to update saved hostels")
+    }
   }
 
   // Handle review submission
@@ -500,65 +570,162 @@ export default function HostelDetailsPage() {
                 {/* Booking Form */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h2 className="text-2xl font-bold mb-4">Book This {hostel.type === "hostel" ? "Hostel" : "PG"}</h2>
-                  <form className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-                    <div className="md:col-span-1">
-                      <label htmlFor="booking-name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        id="booking-name"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                        placeholder="Your name"
-                      />
-                    </div>
-
-                    <div className="md:col-span-1">
-                      <label htmlFor="booking-phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        Contact Number
-                      </label>
-                      <input
-                        type="tel"
-                        id="booking-phone"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                        placeholder="Your phone number"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label htmlFor="booking-college" className="block text-sm font-medium text-gray-700 mb-1">
-                        College
-                      </label>
-                      <input
-                        type="text"
-                        id="booking-college"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                        placeholder="Your college name"
-                        defaultValue={collegeParam || ""}
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label htmlFor="booking-message" className="block text-sm font-medium text-gray-700 mb-1">
-                        Message
-                      </label>
-                      <textarea
-                        id="booking-message"
-                        rows={4}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                        placeholder="Any specific requirements or questions?"
-                      ></textarea>
-                    </div>
-
-                    <div className="md:col-span-2">
+                  
+                  {!isLoggedIn ? (
+                    <div className="text-center py-6">
+                      <div className="text-gray-600 mb-4">You need to be logged in to book this {hostel.type === "hostel" ? "hostel" : "PG"}.</div>
                       <button
-                        type="submit"
-                        className="w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2"
+                        onClick={() => {
+                          // Store the current page URL for redirection after login
+                          localStorage.setItem(
+                            "redirectAfterLogin",
+                            `/hostels/${id}${collegeParam ? `?college=${encodeURIComponent(collegeParam)}` : ""}`
+                          )
+                          router.push("/auth/login")
+                        }}
+                        className="bg-[#8300FF] text-white font-semibold px-6 py-2 rounded-md hover:bg-[#7000DD] transition"
                       >
-                        Book Now <Send size={16} />
+                        Login to Book
                       </button>
                     </div>
-                  </form>
+                  ) : (
+                    <form 
+                      className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0"
+                      onSubmit={async (e) => {
+                        e.preventDefault()
+                        
+                        if (!currentUser) {
+                          toast.error("You must be logged in to book a hostel")
+                          return
+                        }
+                        
+                        if (!bookingForm.name || !bookingForm.phone) {
+                          toast.error("Please fill in all required fields")
+                          return
+                        }
+                        
+                        setIsSubmitting(true)
+                        
+                        try {
+                          const result = await saveBooking({
+                            userId: currentUser.uid,
+                            userName: bookingForm.name,
+                            userEmail: currentUser.email,
+                            userPhone: bookingForm.phone,
+                            hostelId: hostel.id,
+                            hostelName: hostel.name,
+                            college: bookingForm.college,
+                            message: bookingForm.message,
+                            status: 'pending'
+                          })
+                          
+                          if (result.success) {
+                            toast.success("Booking request submitted successfully!")
+                            setBookingForm({
+                              name: "",
+                              phone: "",
+                              college: collegeParam || "",
+                              message: ""
+                            })
+                          } else {
+                            // Display the specific error message if available
+                            const errorMessage = typeof result.error === 'string' 
+                              ? result.error 
+                              : "Failed to submit booking request. Please try again.";
+                            toast.error(errorMessage);
+                            console.error("Booking error details:", result.originalError);
+                          }
+                        } catch (error) {
+                          console.error("Error submitting booking:", error)
+                          toast.error("An error occurred. Please try again later.")
+                        } finally {
+                          setIsSubmitting(false)
+                        }
+                      }}
+                    >
+                      {/* Hostel Name (Read-only) */}
+                      <div className="md:col-span-2">
+                        <label htmlFor="booking-hostel" className="block text-sm font-medium text-gray-700 mb-1">
+                          Hostel Name
+                        </label>
+                        <input
+                          type="text"
+                          id="booking-hostel"
+                          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-md focus:outline-none"
+                          value={hostel.name}
+                          readOnly
+                        />
+                      </div>
+                    
+                      <div className="md:col-span-1">
+                        <label htmlFor="booking-name" className="block text-sm font-medium text-gray-700 mb-1">
+                          Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="booking-name"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                          placeholder="Your name"
+                          value={bookingForm.name}
+                          onChange={(e) => setBookingForm({...bookingForm, name: e.target.value})}
+                          required
+                        />
+                      </div>
+
+                      <div className="md:col-span-1">
+                        <label htmlFor="booking-phone" className="block text-sm font-medium text-gray-700 mb-1">
+                          Contact Number <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          id="booking-phone"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                          placeholder="Your phone number"
+                          value={bookingForm.phone}
+                          onChange={(e) => setBookingForm({...bookingForm, phone: e.target.value})}
+                          required
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label htmlFor="booking-college" className="block text-sm font-medium text-gray-700 mb-1">
+                          College
+                        </label>
+                        <input
+                          type="text"
+                          id="booking-college"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                          placeholder="Your college name"
+                          value={bookingForm.college}
+                          onChange={(e) => setBookingForm({...bookingForm, college: e.target.value})}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label htmlFor="booking-message" className="block text-sm font-medium text-gray-700 mb-1">
+                          Message
+                        </label>
+                        <textarea
+                          id="booking-message"
+                          rows={4}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
+                          placeholder="Any specific requirements or questions?"
+                          value={bookingForm.message}
+                          onChange={(e) => setBookingForm({...bookingForm, message: e.target.value})}
+                        ></textarea>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className={`w-full bg-[#8300FF] text-white font-semibold py-3 rounded-md hover:bg-[#7000DD] transition flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                          {isSubmitting ? 'Submitting...' : 'Book Now'} <Send size={16} />
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               </div>
             </section>
