@@ -25,13 +25,13 @@ export const collegesList = [
   },
   {
     id: 5,
-    name: "ABES",
+    name: "Galgotia University",
     type: "Engineering",
     location: "Greater Noida",
   },
   {
     id: 6,
-    name: "KIET",
+    name: "Dronacharya Group of Institutions",
     type: "Technology",
     location: "Greater Noida",
   },
@@ -43,7 +43,7 @@ export const collegesList = [
   },
   {
     id: 8,
-    name: "BIMTECH",
+    name: "Amity University",
     type: "Management",
     location: "Greater Noida",
   },

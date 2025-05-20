@@ -16,6 +16,7 @@ import { toast } from "sonner"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { User } from "firebase/auth"
+import { reviewsList, type Review } from "@/data/reviews"
 
 import {
   Menu,
@@ -76,16 +77,7 @@ export default function HostelDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // State for reviews
-  interface ReviewType {
-  id: number;
-  name: string;
-  text: string;
-  rating: number;
-  date: string;
-}
-  const [reviewText, setReviewText] = useState("")
-  const [reviews, setReviews] = useState<ReviewType[]>([])
-  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviews, setReviews] = useState<Review[]>([])
 
   // Handle window resize
   const [isDesktop, setIsDesktop] = useState(false)
@@ -138,23 +130,12 @@ export default function HostelDetailsPage() {
     const foundHostel = hostelsList.find((h) => h.id === id)
     if (foundHostel) {
       setHostel(foundHostel)
-      // Initialize with mock reviews
-      setReviews([
-        {
-          id: 1,
-          name: "Rahul Kumar",
-          text: "Great hostel with excellent facilities. The staff is very helpful and the location is perfect.",
-          rating: 5,
-          date: "2023-05-15",
-        },
-        {
-          id: 2,
-          name: "Priya Singh",
-          text: "Clean rooms and good food. The WiFi could be better though.",
-          rating: 4,
-          date: "2023-06-22",
-        },
-      ])
+      // Get random 3 reviews for this hostel
+      const hostelReviews = reviewsList
+        .filter(review => review.hostelName === foundHostel.name)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+      setReviews(hostelReviews)
     } else {
       router.push("/hostels?college=" + encodeURIComponent(collegeParam || ""))
     }
@@ -295,35 +276,6 @@ export default function HostelDetailsPage() {
       console.error("Error toggling saved hostel:", error)
       toast.error("Failed to update saved hostels")
     }
-  }
-
-  // Handle review submission
-  const handleReviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (!isLoggedIn) {
-      // Store the current page URL for redirection after login
-      localStorage.setItem(
-        "redirectAfterLogin",
-        `/hostels/${id}${collegeParam ? `?college=${encodeURIComponent(collegeParam)}` : ""}`,
-      )
-      router.push("/auth/login")
-      return
-    }
-
-    if (reviewText.trim() === "") return
-
-    const newReview = {
-      id: Date.now(),
-      name: "You",
-      text: reviewText,
-      rating: 5,
-      date: new Date().toISOString().split("T")[0],
-    }
-
-    setReviews([newReview, ...reviews])
-    setReviewText("")
-    setShowReviewForm(false)
   }
 
   if (!hostel) {
@@ -501,39 +453,8 @@ export default function HostelDetailsPage() {
                 {/* Reviews Section */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">Reviews</h2>
-                    <button
-                      onClick={() => setShowReviewForm(!showReviewForm)}
-                      className="bg-[#8300FF] text-white px-4 py-2 rounded-md hover:bg-[#7000DD] transition"
-                    >
-                      {showReviewForm ? "Cancel" : "Write a Review"}
-                    </button>
+                    <h2 className="text-2xl font-bold">Past Reviews</h2>
                   </div>
-
-                  {showReviewForm && (
-                    <form onSubmit={handleReviewSubmit} className="mb-6 border-b border-gray-200 pb-6">
-                      <div className="mb-4">
-                        <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
-                          Your Review
-                        </label>
-                        <textarea
-                          id="review"
-                          rows={4}
-                          value={reviewText}
-                          onChange={(e) => setReviewText(e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0]"
-                          placeholder="Share your experience with this hostel..."
-                          required
-                        ></textarea>
-                      </div>
-                      <button
-                        type="submit"
-                        className="bg-[#8300FF] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#7000DD] transition"
-                      >
-                        Submit Review
-                      </button>
-                    </form>
-                  )}
 
                   {reviews.length > 0 ? (
                     <div className="space-y-4">
@@ -562,7 +483,7 @@ export default function HostelDetailsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-4">No reviews yet. Be the first to review!</p>
+                    <p className="text-gray-500 text-center py-4">No reviews yet.</p>
                   )}
                 </div>
 

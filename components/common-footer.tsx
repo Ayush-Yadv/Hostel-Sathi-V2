@@ -44,16 +44,13 @@ export default function CommonFooter() {
           <div className="col-span-2 md:col-span-1">
             <p className="text-center md:text-left mb-4">Follow us:</p>
             <div className="flex gap-6 justify-center md:justify-start">
-              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+              <Link href="https://www.instagram.com/hostel_sathi?igsh=MWdycHdnd3libTkybg==" target="_blank" rel="noopener noreferrer" className="hover:text-[#B366FF] transition-colors">
                 <Instagram size={20} />
               </Link>
-              <Link href="#" className="hover:text-[#B366FF] transition-colors">
-                <Facebook size={20} />
-              </Link>
-              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+              <Link href="https://www.linkedin.com/company/hostel-sath/" target="_blank" rel="noopener noreferrer" className="hover:text-[#B366FF] transition-colors">
                 <Linkedin size={20} />
               </Link>
-              <Link href="#" className="hover:text-[#B366FF] transition-colors">
+              <Link href="https://youtube.com/@unfilteredreviews-ur?si=sTZKuEfPAgTCSMPQ" target="_blank" rel="noopener noreferrer" className="hover:text-[#B366FF] transition-colors">
                 <Youtube size={20} />
               </Link>
             </div>

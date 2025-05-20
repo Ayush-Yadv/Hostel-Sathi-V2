@@ -316,8 +316,8 @@ export default function HomePage() {
       <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">HS</span>
+            <div className="rounded-full overflow-hidden w-10 h-10 flex items-center justify-center">
+              <img src="/hostelsathi-logo.jpg" alt="Hostel Sathi Logo" className="w-10 h-10 object-cover" />
             </div>
             <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
           </Link>
@@ -481,14 +481,11 @@ export default function HomePage() {
                   <div className="carousel-slide min-w-full p-10 md:p-16 lg:p-20 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
                           Crazy discount
                           <br />
                           on Hostels
                         </h2>
-                        <button className="bg-white text-black px-4 py-2 rounded-md font-medium shadow-md hover:bg-gray-100 transition">
-                          Book now
-                        </button>
                       </div>
                       <div className="flex-1 flex justify-center">
                         <Hotel size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
@@ -498,14 +495,11 @@ export default function HomePage() {
                   <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#FF6B6B] to-[#FF9E80]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
                           Premium
                           <br />
                           Amenities
                         </h2>
-                        <button className="bg-white text-black px-4 py-2 rounded-md font-medium shadow-md hover:bg-gray-100 transition">
-                          Explore
-                        </button>
                       </div>
                       <div className="flex-1 flex justify-center">
                         <Wifi size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
@@ -515,14 +509,11 @@ export default function HomePage() {
                   <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#4E54C8] to-[#8F94FB]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
                           Comfortable
                           <br />
                           Rooms
                         </h2>
-                        <button className="bg-white text-black px-4 py-2 rounded-md font-medium shadow-md hover:bg-gray-100 transition">
-                          View rooms
-                        </button>
                       </div>
                       <div className="flex-1 flex justify-center">
                         <Bed size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
@@ -532,14 +523,11 @@ export default function HomePage() {
                   <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#11998E] to-[#38EF7D]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
                           Cafeteria
                           <br />
                           Services
                         </h2>
-                        <button className="bg-white text-black px-4 py-2 rounded-md font-medium shadow-md hover:bg-gray-100 transition">
-                          See menu
-                        </button>
                       </div>
                       <div className="flex-1 flex justify-center">
                         <Coffee size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
@@ -549,14 +537,11 @@ export default function HomePage() {
                   <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#8E2DE2] to-[#4A00E0]">
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
                           Special
                           <br />
                           Offers
                         </h2>
-                        <button className="bg-white text-black px-4 py-2 rounded-md font-medium shadow-md hover:bg-gray-100 transition">
-                          Get deals
-                        </button>
                       </div>
                       <div className="flex-1 flex justify-center">
                         <Discount size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
