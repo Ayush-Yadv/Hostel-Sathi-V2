@@ -29,6 +29,8 @@ import {
   X,
   Search,
   LogOut,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import { collegesList } from "@/data/colleges"
 import { hostelsList } from "@/data/hostels"
@@ -38,7 +40,6 @@ import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
 import { saveContactForm } from '../lib/contactform';
-import { toast } from 'react-hot-toast'; // Ass
 import ContactForm from "@/components/ui/contactform"
 
 export default function HomePage() {
@@ -54,6 +55,10 @@ export default function HomePage() {
   // State for carousel
   const [activeSlide, setActiveSlide] = useState(0)
   const [activeReviewPage, setActiveReviewPage] = useState(0)
+  const [isAutoScrolling, setIsAutoScrolling] = useState(true)
+  const reviewTrackRef = useRef<HTMLDivElement>(null)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -65,8 +70,34 @@ export default function HomePage() {
   // Handle window resize
   const [isDesktop, setIsDesktop] = useState(false)
 
+  // State for FAQ
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+
+    if (isLeftSwipe) {
+      goToReviewPage((activeReviewPage + 1) % 5)
+    }
+    if (isRightSwipe) {
+      goToReviewPage((activeReviewPage - 1 + 5) % 5)
+    }
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -144,6 +175,17 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Auto-scroll reviews
+  useEffect(() => {
+    if (!isAutoScrolling) return
+
+    const interval = setInterval(() => {
+      goToReviewPage((activeReviewPage + 1) % 5)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [activeReviewPage, isAutoScrolling])
+
   // Handle hero carousel navigation
   const goToSlide = (index: number) => {
     setActiveSlide(index)
@@ -152,12 +194,13 @@ export default function HomePage() {
   // Handle review carousel navigation
   const goToReviewPage = (index: number) => {
     setActiveReviewPage(index)
+    setIsAutoScrolling(false) // Pause auto-scroll when manually navigating
 
     // Get the review track element
-    const reviewTrack = document.querySelector(".review-track")as HTMLElement
+    const reviewTrack = reviewTrackRef.current
     if (reviewTrack) {
       // If going to the last slide, prepare for looping back to first
-      if (index === 2) {
+      if (index === 4) {
         // After transition completes, instantly (no animation) go back to first slide
         setTimeout(() => {
           reviewTrack.classList.remove("transition-transform")
@@ -173,6 +216,11 @@ export default function HomePage() {
         }, 300) // Wait for transition to complete
       }
     }
+
+    // Resume auto-scroll after 10 seconds of inactivity
+    setTimeout(() => {
+      setIsAutoScrolling(true)
+    }, 10000)
   }
 
   // Toggle mobile menu
@@ -258,74 +306,9 @@ export default function HomePage() {
     router.push("/contact-thank-you")
   }
 
-
-
-
   // Filter hostels and PGs
   const featuredHostels = hostelsList.filter((hostel) => hostel.type === "hostel").slice(0, 3)
   const featuredPGs = hostelsList.filter((hostel) => hostel.type === "pg").slice(0, 3)
-
-
-
-  // function for th contact form 
-
-
-  //  const ContactForm = () =>  {
-  // const [formData, setFormData] = useState({
-  //   name: '',
-  //   phone: '',
-  //   college: '',
-  //   message: ''
-  // });
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  //   const { id, value } = e.target;
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     [id]: value
-  //   }));
-  // };
-
-  // const handleContactSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-    
-  //   // Basic validation
-  //   if (!formData.name || !formData.phone || !formData.message) {
-  //     toast.error('Please fill in all required fields');
-  //     return;
-  //   }
-    
-  //   setIsSubmitting(true);
-    
-  //   try {
-  //     const result = await saveContactForm({
-  //       name: formData.name,
-  //       phone: formData.phone,
-  //       college: formData.college,
-  //       message: formData.message
-  //     });
-      
-  //     if (result.success) {
-  //       toast.success('Your message has been sent successfully!');
-  //       // Reset form after successful submission
-  //       setFormData({
-  //         name: '',
-  //         phone: '',
-  //         college: '',
-  //         message: ''
-  //       });
-  //     } else {
-  //       toast.error(result.error || 'Failed to send message. Please try again.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Contact form submission error:', error);
-  //     toast.error('An unexpected error occurred. Please try again later.');
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-  // }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -495,10 +478,10 @@ export default function HomePage() {
                   style={{ transform: `translateX(-${activeSlide * 100}%)` }}
                 >
                   {/* Carousel slides */}
-                  <div className="carousel-slide min-w-full p-10 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
+                  <div className="carousel-slide min-w-full p-10 md:p-16 lg:p-20 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
                     <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0">
-                        <h2 className="text-white text-2xl font-bold mb-4">
+                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
+                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
                           Crazy discount
                           <br />
                           on Hostels
@@ -508,14 +491,14 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="flex-1 flex justify-center">
-                        <Hotel size={80} className="text-white/80" />
+                        <Hotel size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
                       </div>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 bg-gradient-to-r from-[#FF6B6B] to-[#FF9E80]">
+                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#FF6B6B] to-[#FF9E80]">
                     <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0">
-                        <h2 className="text-white text-2xl font-bold mb-4">
+                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
+                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
                           Premium
                           <br />
                           Amenities
@@ -525,14 +508,14 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="flex-1 flex justify-center">
-                        <Wifi size={80} className="text-white/80" />
+                        <Wifi size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
                       </div>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 bg-gradient-to-r from-[#4E54C8] to-[#8F94FB]">
+                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#4E54C8] to-[#8F94FB]">
                     <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0">
-                        <h2 className="text-white text-2xl font-bold mb-4">
+                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
+                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
                           Comfortable
                           <br />
                           Rooms
@@ -542,14 +525,14 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="flex-1 flex justify-center">
-                        <Bed size={80} className="text-white/80" />
+                        <Bed size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
                       </div>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 bg-gradient-to-r from-[#11998E] to-[#38EF7D]">
+                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#11998E] to-[#38EF7D]">
                     <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0">
-                        <h2 className="text-white text-2xl font-bold mb-4">
+                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
+                        <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
                           Cafeteria
                           <br />
                           Services
@@ -559,14 +542,14 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="flex-1 flex justify-center">
-                        <Coffee size={80} className="text-white/80" />
+                        <Coffee size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
                       </div>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 bg-gradient-to-r from-[#8E2DE2] to-[#4A00E0]">
+                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#8E2DE2] to-[#4A00E0]">
                     <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0">
-                        <h2 className="text-white text-2xl font-bold mb-4">
+                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
+                        <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
                           Special
                           <br />
                           Offers
@@ -576,7 +559,7 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="flex-1 flex justify-center">
-                        <Discount size={80} className="text-white/80" />
+                        <Discount size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
                       </div>
                     </div>
                   </div>
@@ -861,34 +844,21 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* contact use form component  */}
-        
-        <ContactForm/>
-        {/* /////////////////////////////////// */}
-
         {/* Student Experience Section - Revamped */}
         <section className="py-10 px-4 bg-gray-50">
           <div className="max-w-md mx-auto md:max-w-2xl lg:max-w-4xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Our Student's experience</h2>
-              <div className="flex gap-2">
-                <button
-                  className="review-prev bg-white rounded-full p-1 shadow-sm"
-                  onClick={() => goToReviewPage((activeReviewPage - 1 + 3) % 3)}
-                >
-                  <ChevronLeft size={18} className="text-[#5A00F0]" />
-                </button>
-                <button
-                  className="review-next bg-white rounded-full p-1 shadow-sm"
-                  onClick={() => goToReviewPage((activeReviewPage + 1) % 3)}
-                >
-                  <ChevronRight size={18} className="text-[#5A00F0]" />
-                </button>
-              </div>
             </div>
 
-            <div className="review-carousel overflow-hidden">
+            <div 
+              className="review-carousel overflow-x-auto touch-pan-x snap-x snap-mandatory"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
               <div
+                ref={reviewTrackRef}
                 className="review-track flex gap-4 transition-transform duration-300"
                 style={{ transform: `translateX(-${activeReviewPage * 100}%)` }}
               >
@@ -1040,19 +1010,187 @@ export default function HomePage() {
                   </p>
                   <p className="text-xs text-gray-500 mt-2">MBA, KIET</p>
                 </div>
+
+                {/* Additional Review Cards */}
+                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[#FF6B6B] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                        PK
+                      </div>
+                      <div>
+                        <p className="font-bold">Priya Kumar</p>
+                        <div className="flex items-center">
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    "The hostel provides excellent study environment. The library and study rooms are well-equipped. The staff is very supportive of our academic needs."
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">B.Tech, IMS</p>
+                </div>
+
+                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[#4CAF50] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                        RS
+                      </div>
+                      <div>
+                        <p className="font-bold">Rohan Sharma</p>
+                        <div className="flex items-center">
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-gray-300 stroke-none" size={14} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained."
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">B.Tech, JSS</p>
+                </div>
+
+                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[#9C27B0] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                        AK
+                      </div>
+                      <div>
+                        <p className="font-bold">Aisha Khan</p>
+                        <div className="flex items-center">
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    "The security measures are excellent. I feel very safe here. The hostel has CCTV cameras and security guards 24/7. The location is also very convenient."
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">B.Tech, AKGEC</p>
+                </div>
+
+                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[#2196F3] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                        VS
+                      </div>
+                      <div>
+                        <p className="font-bold">Vivek Singh</p>
+                        <div className="flex items-center">
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-[#FFD700] stroke-none" size={14} />
+                          <Star className="fill-gray-300 stroke-none" size={14} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    "The hostel organizes regular events and activities which help in building a strong community. The sports facilities are also good. Overall a great experience!"
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">B.Tech, DIT</p>
+                </div>
               </div>
             </div>
 
-            {/* Carousel indicators */}
+            {/* Carousel indicators - Show 3 dots at a time */}
             <div className="flex justify-center gap-2 mt-4">
-              {[0, 1, 2].map((index) => (
-                <button
-                  key={index}
-                  className={`h-2 rounded-full transition-all ${
-                    activeReviewPage === index ? "w-8 bg-[#5A00F0]" : "w-2 bg-gray-300"
-                  }`}
-                  onClick={() => goToReviewPage(index)}
-                ></button>
+              {(() => {
+                const totalPages = 5;
+                const dotsToShow = 3;
+                let startPage = Math.max(0, Math.min(activeReviewPage - 1, totalPages - dotsToShow));
+                
+                // Adjust start page to always show 3 dots when possible
+                if (startPage + dotsToShow > totalPages) {
+                  startPage = totalPages - dotsToShow;
+                }
+
+                return Array.from({ length: dotsToShow }, (_, i) => startPage + i).map((index) => (
+                  <button
+                    key={index}
+                    className={`h-2 rounded-full transition-all ${
+                      activeReviewPage === index ? "w-8 bg-[#5A00F0]" : "w-2 bg-gray-300"
+                    }`}
+                    onClick={() => goToReviewPage(index)}
+                  ></button>
+                ));
+              })()}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Form Section - Fixed Alignment */}
+        <section className="py-10 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <ContactForm />
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-16 px-4 bg-gray-50">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold mb-8 text-center text-[#5A00F0]">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {[
+                {
+                  question: "What is Hostel Sathi?",
+                  answer:
+                    "Hostel Sathi is a platform that helps students find affordable and quality hostels and PGs near their colleges. We verify all listings to ensure they meet our standards for safety, cleanliness, and amenities.",
+                },
+                {
+                  question: "How do I find a hostel on Hostel Sathi?",
+                  answer:
+                    "You can search for hostels by selecting your college from the dropdown menu on our homepage or by browsing through our listings. You can filter results by type (hostel or PG), gender preference, and other criteria.",
+                },
+                {
+                  question: "Is there a fee for using Hostel Sathi?",
+                  answer:
+                    "No, Hostel Sathi is completely free for students. We don't charge any brokerage or commission fees. Our goal is to make the hostel-finding process as easy and affordable as possible.",
+                },
+                {
+                  question: "How do I list my property on Hostel Sathi?",
+                  answer:
+                    "Property owners can list their hostels or PGs by clicking on the 'List Your Property' button on our website. You'll need to provide details about your property, including photos, amenities, and pricing.",
+                },
+                {
+                  question: "Are the hostels on Hostel Sathi verified?",
+                  answer:
+                    "Yes, all hostels and PGs listed on Hostel Sathi are verified by our team. We ensure that they meet our standards for safety, cleanliness, and amenities before they are listed on our platform.",
+                },
+              ].map((faq, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <button
+                    className="w-full flex justify-between items-center p-4 text-left font-medium focus:outline-none"
+                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                  >
+                    <span>{faq.question}</span>
+                    {expandedFaq === index ? (
+                      <ChevronUp className="text-[#5A00F0]" />
+                    ) : (
+                      <ChevronDown className="text-[#5A00F0]" />
+                    )}
+                  </button>
+                  <div className={`px-4 pb-4 ${expandedFaq === index ? "block" : "hidden"}`}>
+                    <p className="text-gray-600">{faq.answer}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>

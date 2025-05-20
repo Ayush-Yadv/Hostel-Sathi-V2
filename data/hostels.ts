@@ -39,7 +39,18 @@ export const hostelsList: Hostel[] = [
     description:
       "RGHs Hostel offers comfortable accommodation for students with all modern amenities. Located close to major colleges, it provides a conducive environment for studies.",
     amenities: ["WiFi", "AC Rooms", "Laundry", "Mess", "Power Backup", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/rghs/1.jpg",
+      "/hostels/rghs/2.jpg",
+      "/hostels/rghs/3.jpg",
+      "/hostels/rghs/4.jpg",
+      "/hostels/rghs/5.jpg",
+      "/hostels/rghs/6.jpg",
+      "/hostels/rghs/7.jpg",
+      "/hostels/rghs/8.jpg",
+      "/hostels/rghs/9.jpg",
+      "/hostels/rghs/10.jpg"
+    ],
     rating: 4.5,
     reviews: 120,
     type: "hostel",
@@ -65,7 +76,18 @@ export const hostelsList: Hostel[] = [
     description:
       "RAHs is a premium paying guest accommodation with spacious rooms and excellent facilities. It's ideal for students looking for a home away from home.",
     amenities: ["WiFi", "AC Rooms", "Gym", "Mess", "TV Lounge", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/rahs/1.jpg",
+      "/hostels/rahs/2.jpg",
+      "/hostels/rahs/3.jpg",
+      "/hostels/rahs/4.jpg",
+      "/hostels/rahs/5.jpg",
+      "/hostels/rahs/6.jpg",
+      "/hostels/rahs/7.jpg",
+      "/hostels/rahs/8.jpg",
+      "/hostels/rahs/9.jpg",
+      "/hostels/rahs/10.jpg"
+    ],
     rating: 4.2,
     reviews: 85,
     type: "hostel",
@@ -91,7 +113,18 @@ export const hostelsList: Hostel[] = [
     description:
       "SNHs provides affordable accommodation with all necessary facilities. The hostel focuses on creating a friendly and supportive community for students.",
     amenities: ["WiFi", "Laundry", "Mess", "Study Room", "Power Backup", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/snhs/1.jpg",
+      "/hostels/snhs/2.jpg",
+      "/hostels/snhs/3.jpg",
+      "/hostels/snhs/4.jpg",
+      "/hostels/snhs/5.jpg",
+      "/hostels/snhs/6.jpg",
+      "/hostels/snhs/7.jpg",
+      "/hostels/snhs/8.jpg",
+      "/hostels/snhs/9.jpg",
+      "/hostels/snhs/10.jpg"
+    ],
     rating: 4.0,
     reviews: 95,
     type: "hostel",
@@ -117,7 +150,18 @@ export const hostelsList: Hostel[] = [
     description:
       "WHTHs is a premium hostel located right next to major educational institutions. It offers luxurious rooms with all modern amenities for a comfortable stay.",
     amenities: ["WiFi", "AC Rooms", "Gym", "Swimming Pool", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/whths/1.jpg",
+      "/hostels/whths/2.jpg",
+      "/hostels/whths/3.jpg",
+      "/hostels/whths/4.jpg",
+      "/hostels/whths/5.jpg",
+      "/hostels/whths/6.jpg",
+      "/hostels/whths/7.jpg",
+      "/hostels/whths/8.jpg",
+      "/hostels/whths/9.jpg",
+      "/hostels/whths/10.jpg"
+    ],
     rating: 4.7,
     reviews: 150,
     type: "hostel",
@@ -143,7 +187,18 @@ export const hostelsList: Hostel[] = [
     description:
       "RKHs is designed specifically for students who prioritize academics. It provides a quiet and conducive environment for studies with all necessary facilities.",
     amenities: ["WiFi", "Study Rooms", "Library", "Mess", "Power Backup", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/rkhs/1.jpg",
+      "/hostels/rkhs/2.jpg",
+      "/hostels/rkhs/3.jpg",
+      "/hostels/rkhs/4.jpg",
+      "/hostels/rkhs/5.jpg",
+      "/hostels/rkhs/6.jpg",
+      "/hostels/rkhs/7.jpg",
+      "/hostels/rkhs/8.jpg",
+      "/hostels/rkhs/9.jpg",
+      "/hostels/rkhs/10.jpg"
+    ],
     rating: 4.3,
     reviews: 110,
     type: "hostel",
@@ -169,7 +224,18 @@ export const hostelsList: Hostel[] = [
     description:
       "BLUHs Hostel offers a homely environment with all modern amenities. The hostel is known for its cleanliness, good food, and friendly staff.",
     amenities: ["WiFi", "AC Rooms", "Homely Food", "Laundry", "TV Lounge", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/bluhs/1.jpg",
+      "/hostels/bluhs/2.jpg",
+      "/hostels/bluhs/3.jpg",
+      "/hostels/bluhs/4.jpg",
+      "/hostels/bluhs/5.jpg",
+      "/hostels/bluhs/6.jpg",
+      "/hostels/bluhs/7.jpg",
+      "/hostels/bluhs/8.jpg",
+      "/hostels/bluhs/9.jpg",
+      "/hostels/bluhs/10.jpg"
+    ],
     rating: 4.4,
     reviews: 130,
     type: "hostel",
@@ -195,7 +261,18 @@ export const hostelsList: Hostel[] = [
     description:
       "Green View Hostel is surrounded by lush greenery, providing a refreshing environment for students. The hostel offers comfortable rooms and good facilities.",
     amenities: ["WiFi", "Garden", "Mess", "Laundry", "Power Backup", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/maghs/1.jpg",
+      "/hostels/maghs/2.jpg",
+      "/hostels/maghs/3.jpg",
+      "/hostels/maghs/4.jpg",
+      "/hostels/maghs/5.jpg",
+      "/hostels/maghs/6.jpg",
+      "/hostels/maghs/7.jpg",
+      "/hostels/maghs/8.jpg",
+      "/hostels/maghs/9.jpg",
+      "/hostels/maghs/10.jpg"
+    ],
     rating: 4.1,
     reviews: 90,
     type: "hostel",
@@ -221,7 +298,18 @@ export const hostelsList: Hostel[] = [
     description:
       "RKHs Girls is designed for tech-savvy students with high-speed internet and modern amenities. It's located close to major tech institutions and offers a comfortable stay.",
     amenities: ["High-Speed WiFi", "AC Rooms", "Tech Lounge", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/rkhs-girls/1.jpg",
+      "/hostels/rkhs-girls/2.jpg",
+      "/hostels/rkhs-girls/3.jpg",
+      "/hostels/rkhs-girls/4.jpg",
+      "/hostels/rkhs-girls/5.jpg",
+      "/hostels/rkhs-girls/6.jpg",
+      "/hostels/rkhs-girls/7.jpg",
+      "/hostels/rkhs-girls/8.jpg",
+      "/hostels/rkhs-girls/9.jpg",
+      "/hostels/rkhs-girls/10.jpg"
+    ],
     rating: 4.6,
     reviews: 140,
     type: "hostel",
@@ -247,7 +335,18 @@ export const hostelsList: Hostel[] = [
     description:
       "WHIHs offers premium accommodation with modern amenities and a focus on student comfort. Known for its excellent facilities and supportive environment.",
     amenities: ["WiFi", "AC Rooms", "Gym", "Mess", "TV Lounge", "Security", "Power Backup"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/whihs/1.jpg",
+      "/hostels/whihs/2.jpg",
+      "/hostels/whihs/3.jpg",
+      "/hostels/whihs/4.jpg",
+      "/hostels/whihs/5.jpg",
+      "/hostels/whihs/6.jpg",
+      "/hostels/whihs/7.jpg",
+      "/hostels/whihs/8.jpg",
+      "/hostels/whihs/9.jpg",
+      "/hostels/whihs/10.jpg"
+    ],
     rating: 4.5,
     reviews: 125,
     type: "hostel",
@@ -273,7 +372,18 @@ export const hostelsList: Hostel[] = [
     description:
       "JITGHs offers comfortable accommodation with all essential facilities. Perfect for students looking for a peaceful environment.",
     amenities: ["WiFi", "Mess", "Power Backup", "Security", "Laundry"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/jitghs/1.jpg",
+      "/hostels/jitghs/2.jpg",
+      "/hostels/jitghs/3.jpg",
+      "/hostels/jitghs/4.jpg",
+      "/hostels/jitghs/5.jpg",
+      "/hostels/jitghs/6.jpg",
+      "/hostels/jitghs/7.jpg",
+      "/hostels/jitghs/8.jpg",
+      "/hostels/jitghs/9.jpg",
+      "/hostels/jitghs/10.jpg"
+    ],
     rating: 4.0,
     reviews: 85,
     type: "pg",
@@ -299,7 +409,18 @@ export const hostelsList: Hostel[] = [
     description:
       "MohanHs PG offers affordable accommodation with modern amenities. Suitable for both boys and girls with separate wings.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/mohanhs/1.jpg",
+      "/hostels/mohanhs/2.jpg",
+      "/hostels/mohanhs/3.jpg",
+      "/hostels/mohanhs/4.jpg",
+      "/hostels/mohanhs/5.jpg",
+      "/hostels/mohanhs/6.jpg",
+      "/hostels/mohanhs/7.jpg",
+      "/hostels/mohanhs/8.jpg",
+      "/hostels/mohanhs/9.jpg",
+      "/hostels/mohanhs/10.jpg"
+    ],
     rating: 4.2,
     reviews: 120,
     type: "pg",
@@ -325,7 +446,18 @@ export const hostelsList: Hostel[] = [
     description:
       "MohanHs PG offers affordable accommodation with modern amenities. Suitable for both boys and girls with separate wings.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/mohanhs-girls/1.jpg",
+      "/hostels/mohanhs-girls/2.jpg",
+      "/hostels/mohanhs-girls/3.jpg",
+      "/hostels/mohanhs-girls/4.jpg",
+      "/hostels/mohanhs-girls/5.jpg",
+      "/hostels/mohanhs-girls/6.jpg",
+      "/hostels/mohanhs-girls/7.jpg",
+      "/hostels/mohanhs-girls/8.jpg",
+      "/hostels/mohanhs-girls/9.jpg",
+      "/hostels/mohanhs-girls/10.jpg"
+    ],
     rating: 4.2,
     reviews: 120,
     type: "pg",
@@ -351,7 +483,18 @@ export const hostelsList: Hostel[] = [
     description:
       "SINHs PG provides comfortable accommodation with all necessary facilities. Known for its clean environment and good food.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/sinhs/1.jpg",
+      "/hostels/sinhs/2.jpg",
+      "/hostels/sinhs/3.jpg",
+      "/hostels/sinhs/4.jpg",
+      "/hostels/sinhs/5.jpg",
+      "/hostels/sinhs/6.jpg",
+      "/hostels/sinhs/7.jpg",
+      "/hostels/sinhs/8.jpg",
+      "/hostels/sinhs/9.jpg",
+      "/hostels/sinhs/10.jpg"
+    ],
     rating: 4.1,
     reviews: 95,
     type: "pg",
@@ -377,7 +520,18 @@ export const hostelsList: Hostel[] = [
     description:
       "VIJAYHs PG offers budget-friendly accommodation with essential facilities. Perfect for students looking for affordable options.",
     amenities: ["WiFi", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/vijayhs/1.jpg",
+      "/hostels/vijayhs/2.jpg",
+      "/hostels/vijayhs/3.jpg",
+      "/hostels/vijayhs/4.jpg",
+      "/hostels/vijayhs/5.jpg",
+      "/hostels/vijayhs/6.jpg",
+      "/hostels/vijayhs/7.jpg",
+      "/hostels/vijayhs/8.jpg",
+      "/hostels/vijayhs/9.jpg",
+      "/hostels/vijayhs/10.jpg"
+    ],
     rating: 3.9,
     reviews: 80,
     type: "pg",
@@ -403,7 +557,18 @@ export const hostelsList: Hostel[] = [
     description:
       "MANYAHs PG provides affordable accommodation with separate wings for boys and girls. Known for its homely environment.",
     amenities: ["WiFi", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/manyahs/1.jpg",
+      "/hostels/manyahs/2.jpg",
+      "/hostels/manyahs/3.jpg",
+      "/hostels/manyahs/4.jpg",
+      "/hostels/manyahs/5.jpg",
+      "/hostels/manyahs/6.jpg",
+      "/hostels/manyahs/7.jpg",
+      "/hostels/manyahs/8.jpg",
+      "/hostels/manyahs/9.jpg",
+      "/hostels/manyahs/10.jpg"
+    ],
     rating: 4.0,
     reviews: 90,
     type: "pg",
@@ -429,7 +594,18 @@ export const hostelsList: Hostel[] = [
     description:
       "MANYAHs PG provides affordable accommodation with separate wings for boys and girls. Known for its homely environment.",
     amenities: ["WiFi", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/manyahs-girls/1.jpg",
+      "/hostels/manyahs-girls/2.jpg",
+      "/hostels/manyahs-girls/3.jpg",
+      "/hostels/manyahs-girls/4.jpg",
+      "/hostels/manyahs-girls/5.jpg",
+      "/hostels/manyahs-girls/6.jpg",
+      "/hostels/manyahs-girls/7.jpg",
+      "/hostels/manyahs-girls/8.jpg",
+      "/hostels/manyahs-girls/9.jpg",
+      "/hostels/manyahs-girls/10.jpg"
+    ],
     rating: 4.0,
     reviews: 90,
     type: "pg",
@@ -455,7 +631,18 @@ export const hostelsList: Hostel[] = [
     description:
       "OMHs PG offers comfortable accommodation with modern amenities. Known for its clean environment and good facilities.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/omhs/1.jpg",
+      "/hostels/omhs/2.jpg",
+      "/hostels/omhs/3.jpg",
+      "/hostels/omhs/4.jpg",
+      "/hostels/omhs/5.jpg",
+      "/hostels/omhs/6.jpg",
+      "/hostels/omhs/7.jpg",
+      "/hostels/omhs/8.jpg",
+      "/hostels/omhs/9.jpg",
+      "/hostels/omhs/10.jpg"
+    ],
     rating: 4.2,
     reviews: 100,
     type: "pg",
@@ -481,7 +668,18 @@ export const hostelsList: Hostel[] = [
     description:
       "PREHs PG provides comfortable accommodation exclusively for girls. Known for its safe environment and good facilities.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
-    images: Array(10).fill("/placeholder.svg?height=300&width=400"),
+    images: [
+      "/hostels/prehs/1.jpg",
+      "/hostels/prehs/2.jpg",
+      "/hostels/prehs/3.jpg",
+      "/hostels/prehs/4.jpg",
+      "/hostels/prehs/5.jpg",
+      "/hostels/prehs/6.jpg",
+      "/hostels/prehs/7.jpg",
+      "/hostels/prehs/8.jpg",
+      "/hostels/prehs/9.jpg",
+      "/hostels/prehs/10.jpg"
+    ],
     rating: 4.3,
     reviews: 110,
     type: "pg",

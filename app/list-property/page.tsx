@@ -162,8 +162,24 @@ const handleChange = (
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
-    const files = Array.from(e.target.files)
-    setImages(files)
+    
+    // Get new selected files
+    const newFiles = Array.from(e.target.files)
+    
+    // Combine with existing files, ensuring we don't exceed 8 files
+    const updatedFiles = [...images, ...newFiles].slice(0, 8)
+    
+    // Update images state
+    setImages(updatedFiles)
+    
+    // Show success message if exactly 8 files are selected
+    if (updatedFiles.length === 8) {
+      setError("") // Clear any previous errors
+      // You can add a success message here if you want
+    }
+    
+    // Log for debugging
+    console.log('Total files selected:', updatedFiles.map(file => file.name))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -172,13 +188,6 @@ const handleChange = (
     setSubmitting(true)
 
     try {
-      // Check if at least 10 images are uploaded
-      if (images.length < 10) {
-        setError("Please upload at least 10 photos of your property")
-        setSubmitting(false)
-        return
-      }
-
       // Format nearby colleges as an array
       const collegesArray = formData.nearbyColleges
         .split(",")
@@ -232,7 +241,7 @@ const handleChange = (
           }),
       }
 
-      const { success, propertyId, error } = await submitProperty(propertyData, images)
+      const { success, propertyId, error } = await submitProperty(propertyData)
 
       if (error) {
         throw new Error(error.message || "Failed to submit property")
@@ -717,7 +726,7 @@ const handleChange = (
               {/* Images */}
               <div>
                 <label htmlFor="images" className="block text-sm font-medium text-gray-700 mb-1">
-                  Upload Images (Minimum 10 required) *
+                  Upload Images (Exactly 8 required) *
                 </label>
                 <div className="flex items-center justify-center w-full">
                   <label
@@ -730,7 +739,7 @@ const handleChange = (
                         <span className="font-semibold">Click to upload</span> or drag and drop
                       </p>
                       <p className="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 5MB each)</p>
-                      <p className="text-xs font-medium text-[#5A00F0] mt-1">Minimum 10 photos required</p>
+                      <p className="text-xs font-medium text-[#5A00F0] mt-1">Exactly 8 photos required</p>
                     </div>
                     <input
                       id="images"
@@ -745,13 +754,16 @@ const handleChange = (
                 </div>
                 {images.length > 0 && (
                   <div className="mt-2">
-                    <p className={`text-sm ${images.length < 10 ? "text-red-500" : "text-green-600"}`}>
+                    <p className={`text-sm ${images.length !== 8 ? "text-red-500" : "text-green-600"}`}>
                       {images.length} files selected{" "}
-                      {images.length < 10 ? `(${10 - images.length} more required)` : "(✓)"}
+                      {images.length !== 8 ? `(${8 - images.length} more required)` : "✓ All photos uploaded successfully!"}
                     </p>
                     <ul className="mt-1 text-xs text-gray-500 list-disc list-inside max-h-32 overflow-y-auto">
                       {Array.from(images).map((image, index) => (
-                        <li key={index}>{image.name}</li>
+                        <li key={index} className="flex items-center justify-between">
+                          <span>{image.name}</span>
+                          <span className="text-green-600">Ready to upload</span>
+                        </li>
                       ))}
                     </ul>
                   </div>

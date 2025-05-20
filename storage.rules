@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Allow public read access
+      allow read: if true;
+      
+      // Allow authenticated users to upload images
+      allow write: if request.auth != null 
+                   && request.resource.size < 5 * 1024 * 1024  // 5MB max file size
+                   && request.resource.contentType.matches('image/.*')  // Only image files
+                   && (
+                     request.origin.matches('http://localhost:3000') ||  // Local development
+                     request.origin.matches('https://hostel-sathi-alpha-version.web.app')  // Production
+                   );
+    }
+  }
+} 

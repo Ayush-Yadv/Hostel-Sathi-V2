@@ -22,87 +22,65 @@ const approvedPropertiesCollection = collection(db, "properties")
 
 export interface PropertyData {
   ownerId?: string|null;
-  // Add other property fields here based on what you expect
-  [key: string]: any; // This allows for additional dynamic properties
+  ownerName: string;
+  contactNumber: string;
+  email: string;
+  propertyName: string;
+  propertyType: string;
+  gender: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  nearbyColleges: string[];
+  description: string;
+  monthlyRent: string;
+  amenities: {
+    wifi: boolean;
+    mess: boolean;
+    security: boolean;
+    powerBackup: boolean;
+    tvLounge: boolean;
+    gym: boolean;
+    studyRoom: boolean;
+    washingMachine: boolean;
+    acRooms: boolean;
+    attachedBathroom: boolean;
+  };
+  roomTypes: {
+    single: boolean;
+    double: boolean;
+    triple: boolean;
+    fourSharing: boolean;
+  };
+  amenitiesList: string[];
+  roomTypesList: string[];
 }
 
-export const submitProperty = async (propertyData: PropertyData, images: File[]) => {
+export const submitProperty = async (propertyData: PropertyData) => {
   try {
-    // Upload and optimize images
-    const imageUrls: string[] = [];
-
-    for (const image of images) {
-      // Create a reference to the storage location
-      const storageRef = ref(
-        storage,
-        `property-images/${propertyData.ownerId || "anonymous"}/${Date.now()}_${image.name}`,
-      )
-
-      // Optimize the image before uploading
-      const optimizedImage = await optimizeImage(image, 1200, 800)
-
-      // Upload the optimized image
-      await uploadBytes(storageRef, optimizedImage)
-
-      // Get the download URL
-      const imageUrl = await getDownloadURL(storageRef)
-      imageUrls.push(imageUrl)
-    }
-
     // Add the property to the pendingProperties collection
     const docRef = await addDoc(collection(db, "pendingProperties"), {
       ...propertyData,
-      images: imageUrls,
       status: "pending",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
 
-    return { success: true, propertyId: docRef.id, error: null }
+    return { 
+      success: true, 
+      propertyId: docRef.id, 
+      error: null
+    }
   } catch (error) {
     console.error("Error submitting property:", error)
-    return { success: false, propertyId: null, error: error as Error }
+    return { 
+      success: false, 
+      propertyId: null, 
+      error: error as Error
+    }
   }
 }
-// // Submit a new property listing (goes to pending)
-// export const submitProperty = async (propertyData, images) => {
-//   try {
-//     // Upload and optimize images
-//     const imageUrls = []
-
-//     for (const image of images) {
-//       // Create a reference to the storage location
-//       const storageRef = ref(
-//         storage,
-//         `property-images/${propertyData.ownerId || "anonymous"}/${Date.now()}_${image.name}`,
-//       )
-
-//       // Optimize the image before uploading
-//       const optimizedImage = await optimizeImage(image, 1200, 800)
-
-//       // Upload the optimized image
-//       await uploadBytes(storageRef, optimizedImage)
-
-//       // Get the download URL
-//       const imageUrl = await getDownloadURL(storageRef)
-//       imageUrls.push(imageUrl)
-//     }
-
-//     // Add the property to the pendingProperties collection
-//     const docRef = await addDoc(collection(db, "pendingProperties"), {
-//       ...propertyData,
-//       images: imageUrls,
-//       status: "pending",
-//       createdAt: serverTimestamp(),
-//       updatedAt: serverTimestamp(),
-//     })
-
-//     return { success: true, propertyId: docRef.id, error: null }
-//   } catch (error) {
-//     console.error("Error submitting property:", error)
-//     return { success: false, propertyId: null, error }
-//   }
-// }
 
 // Get all pending properties (for admin)
 export const getPendingProperties = async () => {
