@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, Facebook, Linkedin, Youtube, Phone, MapPin } from "lucide-react"
+import { Instagram, Facebook, Linkedin, Youtube } from "lucide-react"
 
 export default function CommonFooter() {
   return (
@@ -15,18 +15,6 @@ export default function CommonFooter() {
               <h3 className="text-xl font-bold">Hostel Sathi</h3>
               <p className="text-sm italic">Your Second Home</p>
             </div>
-          </div>
-        </div>
-
-        {/* Contact Information */}
-        <div className="flex flex-col items-center mb-8 md:mb-10">
-          <div className="flex items-center gap-2 mb-2">
-            <Phone size={20} />
-            <span>+91 9499459310</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin size={20} />
-            <span>Knowledge Park, Greater Noida, Uttar Pradesh 201310</span>
           </div>
         </div>
 
