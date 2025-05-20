@@ -115,7 +115,7 @@ export default function HostelsPage() {
     // Apply gender preference filter
     if (genderPreference) {
       filteredHostels = filteredHostels.filter(
-        (hostel) => hostel.gender === genderPreference || hostel.gender === "co-ed",
+        (hostel) => hostel.gender === genderPreference
       )
     }
 
@@ -403,89 +403,62 @@ export default function HostelsPage() {
                   {hostels.map((hostel) => (
                     <div
                       key={hostel.id}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                     >
-                      <div className="relative h-48">
-                        <Image
-                          src="/placeholder.svg?height=300&width=400"
-                          alt={hostel.name}
-                          fill
-                          className="object-cover"
-                        />
-                        <button
-                          onClick={(e) => toggleSaveHostel(hostel.id, e)}
-                          className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md z-10"
-                        >
-                          <Heart
-                            size={20}
-                            className={
-                              savedHostels.includes(hostel.id) ? "fill-[#FF6B6B] text-[#FF6B6B]" : "text-gray-400"
-                            }
+                      <Link
+                        href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}`}
+                        className="block"
+                      >
+                        <div className="relative h-48">
+                          <Image
+                            src={hostel.images[0]}
+                            alt={hostel.name}
+                            fill
+                            className="object-cover transition-transform duration-300 hover:scale-105"
                           />
-                        </button>
-                        {/* Type and Gender Badge */}
-                        <div className="absolute top-3 left-3 flex gap-2">
-                          <span className="bg-[#5A00F0] text-white text-xs px-2 py-1 rounded-full uppercase">
-                            {hostel.type}
-                          </span>
-                          <span
-                            className={`text-white text-xs px-2 py-1 rounded-full uppercase ${
-                              hostel.gender === "boys"
-                                ? "bg-blue-500"
-                                : hostel.gender === "girls"
-                                  ? "bg-pink-500"
-                                  : "bg-purple-500"
-                            }`}
-                          >
-                            {hostel.gender}
-                          </span>
                         </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h2 className="text-xl font-bold">{hostel.name}</h2>
-                          <div className="flex items-center bg-[#5A00F0] text-white px-2 py-1 rounded">
-                            <Star size={14} className="fill-white mr-1" />
-                            <span>{hostel.rating}</span>
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-xl font-bold">{hostel.name}</h3>
+                            <div className="flex items-center bg-[#5A00F0] text-white px-2 py-1 rounded">
+                              <Star size={14} className="fill-white mr-1" />
+                              <span>{hostel.rating}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center mb-3">
+                            <MapPin size={16} className="text-gray-500 mr-1" />
+                            <span className="text-gray-500 text-sm">{hostel.address}</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {hostel.amenities.slice(0, 3).map((amenity, index) => (
+                              <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                {amenity}
+                              </span>
+                            ))}
+                            {hostel.amenities.length > 3 && (
+                              <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                +{hostel.amenities.length - 3} more
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="text-2xl font-bold text-[#5A00F0]">₹{hostel.price}</span>
+                              <span className="text-gray-500 text-sm">/month</span>
+                            </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center mb-3">
-                          <MapPin size={16} className="text-gray-500 mr-1" />
-                          <span className="text-gray-500 text-sm">
-                            {hostel.distance[selectedCollege] || hostel.distance["Other"]} km from{" "}
-                            {selectedCollege || "city center"}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {hostel.amenities.slice(0, 3).map((amenity, index) => (
-                            <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
-                              {amenity === "WiFi" && <Wifi size={12} className="inline mr-1" />}
-                              {amenity === "Mess" && <Utensils size={12} className="inline mr-1" />}
-                              {amenity === "Security" && <Shield size={12} className="inline mr-1" />}
-                              {amenity}
-                            </span>
-                          ))}
-                          {hostel.amenities.length > 3 && (
-                            <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
-                              +{hostel.amenities.length - 3} more
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <span className="text-2xl font-bold text-[#5A00F0]">₹{hostel.price}</span>
-                            <span className="text-gray-500 text-sm">/month</span>
-                          </div>
-                          <Link
-                            href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}`}
-                            className="bg-[#8300FF] text-white px-3 py-2 rounded-md hover:bg-[#7000DD] transition"
-                          >
-                            View Details
-                          </Link>
-                        </div>
+                      </Link>
+                      <div className="px-4 pb-4">
+                        <Link
+                          href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}`}
+                          className="w-full bg-[#5A00F0] text-white font-semibold py-2 rounded-md hover:bg-[#4800C0] transition flex items-center justify-center gap-2"
+                        >
+                          <span>View Details</span>
+                        </Link>
                       </div>
                     </div>
                   ))}

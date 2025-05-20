@@ -108,7 +108,7 @@ export default function ContactUsPage() {
                   className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
                     errors.name ? "border-red-500" : "border-gray-300"
                   }`}
-                  placeholder="John Doe"
+                  placeholder="Enter your name"
                 />
                 {errors.name && (
                   <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
@@ -144,7 +144,7 @@ export default function ContactUsPage() {
                   className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A00F0] ${
                     errors.contact ? "border-red-500" : "border-gray-300"
                   }`}
-                  placeholder="+91 98765 43210"
+                  placeholder="9876543210"
                 />
                 {errors.contact && (
                   <p className="mt-1 text-sm text-red-500">{errors.contact.message}</p>

@@ -7,6 +7,7 @@ import { ArrowLeft, Linkedin, Mail, Twitter } from "lucide-react"
 import CommonFooter from "@/components/common-footer"
 import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
+import CommonNavbar from "@/components/common-navbar"
 
 export default function TeamPage() {
   const [isDesktop, setIsDesktop] = useState(false)
@@ -72,27 +73,7 @@ export default function TeamPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
-        <div className="flex items-center">
-          <Link href="/" className="text-[#5A00F0] mr-2">
-            <ArrowLeft size={24} />
-          </Link>
-          <Link href="/" className="flex items-center">
-            <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">HS</span>
-            </div>
-            <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
-          </Link>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href={isLoggedIn ? "/account" : "/auth/login"}
-            className="bg-[#8300FF] text-white font-semibold px-4 py-2 rounded-md hover:bg-[#7000DD] transition"
-          >
-            {isLoggedIn ? "Logout" : "Login/sign up"}
-          </Link>
-        </div>
-      </header>
+      <CommonNavbar />
 
       {/* Main Content */}
       <main className="flex-1 bg-gray-50">

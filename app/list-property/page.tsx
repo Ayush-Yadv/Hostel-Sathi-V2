@@ -280,26 +280,9 @@ const handleChange = (
       {/* Main Content */}
       <main className="flex-1 bg-gray-50">
         <div className="min-h-screen bg-gray-50">
-          {/* Header */}
-          <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
-            <div className="flex items-center">
-              <Link href="/" className="text-[#5A00F0] mr-2">
-                <ArrowLeft size={24} />
-              </Link>
-              <Link href="/" className="flex items-center">
-                <div className="rounded-full bg-[#5A00F0] w-10 h-10 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">HS</span>
-                </div>
-                <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>
-              </Link>
-            </div>
-          </header>
-
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">List Your Property</h1>
-              <p className="text-gray-600">Reach thousands of students looking for accommodation</p>
-            </div>
+          {/* Remove duplicate header */}
+          <div className="max-w-4xl mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-6">List Your Property</h1>
 
             {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">{error}</div>}
 

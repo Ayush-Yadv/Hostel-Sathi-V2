@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, Facebook, Linkedin, Youtube } from "lucide-react"
+import { Instagram, Facebook, Linkedin, Youtube, Phone, MapPin } from "lucide-react"
 
 export default function CommonFooter() {
   return (
@@ -8,13 +8,25 @@ export default function CommonFooter() {
         {/* Logo Section */}
         <div className="mb-8 md:mb-10">
           <div className="flex items-center justify-center gap-3">
-            <div className="rounded-full bg-white w-10 h-10 flex items-center justify-center">
-              <span className="text-[#5A00F0] font-bold text-lg">HS</span>
+            <div className="rounded-full overflow-hidden w-10 h-10 flex items-center justify-center">
+              <img src="/hostelsathi-logo.jpg" alt="Hostel Sathi Logo" className="w-10 h-10 object-cover" />
             </div>
             <div>
               <h3 className="text-xl font-bold">Hostel Sathi</h3>
               <p className="text-sm italic">Your Second Home</p>
             </div>
+          </div>
+        </div>
+
+        {/* Contact Information */}
+        <div className="flex flex-col items-center mb-8 md:mb-10">
+          <div className="flex items-center gap-2 mb-2">
+            <Phone size={20} />
+            <span>+91 9499459310</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin size={20} />
+            <span>Knowledge Park, Greater Noida, Uttar Pradesh 201310</span>
           </div>
         </div>
 

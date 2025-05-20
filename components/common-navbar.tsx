@@ -75,7 +75,7 @@ export default function CommonNavbar() {
       <header className="flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-          <div className="rounded-full overflow-hidden w-10 h-10 flex items-center justify-center">
+            <div className="rounded-full overflow-hidden w-10 h-10 flex items-center justify-center">
               <img src="/hostelsathi-logo.jpg" alt="Hostel Sathi Logo" className="w-10 h-10 object-cover" />
             </div>
             <h1 className="ml-2 text-lg font-bold hidden md:block">Hostel Sathi</h1>

@@ -79,7 +79,23 @@ export default function LoginPage() {
         const { user, error } = await signIn(formData.email, formData.password)
 
         if (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to sign in")
+          // Handle specific Firebase errors
+          let errorMessage = "Failed to sign in"
+          
+          if (error instanceof Error) {
+            // Check for specific Firebase error codes
+            if (error.message.includes("auth/wrong-password") || error.message.includes("auth/user-not-found")) {
+              errorMessage = "Invalid email or password. Please try again."
+            } else if (error.message.includes("auth/invalid-email")) {
+              errorMessage = "Invalid email format. Please enter a valid email address."
+            } else if (error.message.includes("auth/too-many-requests")) {
+              errorMessage = "Too many failed attempts. Please try again later or reset your password."
+            } else if (error.message.includes("auth/user-disabled")) {
+              errorMessage = "This account has been disabled. Please contact support."
+            }
+          }
+          
+          throw new Error(errorMessage)
         }
 
         if (user) {
