@@ -697,7 +697,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src="/placeholder.svg?height=300&width=400"
+                      src={hostel.images[0]}
                       alt={hostel.name}
                       fill
                       className="object-cover"
@@ -770,7 +770,12 @@ export default function HomePage() {
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <div className="relative h-48">
-                    <Image src="/placeholder.svg?height=300&width=400" alt={pg.name} fill className="object-cover" />
+                    <Image
+                      src={pg.images[0]}
+                      alt={pg.name}
+                      fill
+                      className="object-cover"
+                    />
                     <button
                       onClick={(e) => toggleSaveHostel(pg.id, e)}
                       className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md z-10"
