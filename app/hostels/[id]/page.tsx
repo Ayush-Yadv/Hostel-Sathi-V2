@@ -340,47 +340,53 @@ export default function HostelDetailsPage() {
                   />
                 </button>
 
-                {/* Image Navigation */}
-                <button
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-                  onClick={prevImage}
-                >
-                  <ChevronLeft className="text-[#5A00F0]" />
-                </button>
-                <button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-                  onClick={nextImage}
-                >
-                  <ChevronRight className="text-[#5A00F0]" />
-                </button>
-
-                {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                  {activeImageIndex + 1} / {hostelImages.length}
-                </div>
-              </div>
-
-              {/* Thumbnail Gallery */}
-              <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
-                <div className="flex gap-2">
-                  {hostelImages.map((image, index) => (
+                {/* Image Navigation - Only show if there are multiple images */}
+                {hostelImages.length > 1 && (
+                  <>
                     <button
-                      key={index}
-                      className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
-                        activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
-                      }`}
-                      onClick={() => goToImage(index)}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                      onClick={prevImage}
                     >
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-cover"
-                      />
+                      <ChevronLeft className="text-[#5A00F0]" />
                     </button>
-                  ))}
-                </div>
+                    <button
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                      onClick={nextImage}
+                    >
+                      <ChevronRight className="text-[#5A00F0]" />
+                    </button>
+
+                    {/* Image Counter */}
+                    <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                      {activeImageIndex + 1} / {hostelImages.length}
+                    </div>
+                  </>
+                )}
               </div>
+
+              {/* Thumbnail Gallery - Only show if there are multiple images */}
+              {hostelImages.length > 1 && (
+                <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
+                  <div className="flex gap-2">
+                    {hostelImages.map((image, index) => (
+                      <button
+                        key={index}
+                        className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
+                          activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
+                        }`}
+                        onClick={() => goToImage(index)}
+                      >
+                        <Image
+                          src={image.src}
+                          alt={image.alt}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* Hostel Details */}
