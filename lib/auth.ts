@@ -79,7 +79,7 @@ export const signUp = async (email: string, password: string, name?: string, pho
     }
 
     return { user, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in signUp:", error);
     return { user: null, error }
   }
@@ -107,7 +107,7 @@ export const signIn = async (email: string, password: string) => {
     }
     
     return { user: userCredential.user, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in signIn:", error)
     return { user: null, error }
   }
@@ -142,7 +142,7 @@ export const signInWithGoogle = async () => {
     }
 
     return { user, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in Google sign in:", error)
     return { user: null, error }
   }
@@ -151,24 +151,22 @@ export const signInWithGoogle = async () => {
 // Initialize reCAPTCHA verifier
 export const initRecaptchaVerifier = (containerId: string) => {
   try {
-    // Use invisible reCAPTCHA for better user experience
+    // For Firebase SDK v9+, invisible reCAPTCHA is used automatically
+    // We just need to create the verifier with minimal configuration
     const verifier = new RecaptchaVerifier(auth, containerId, {
       size: "invisible",
       callback: () => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        console.log("reCAPTCHA verified");
-      },
-      'expired-callback': () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
-        console.log("reCAPTCHA expired");
+        // This callback is triggered when reCAPTCHA is verified
+        console.log("reCAPTCHA verified automatically");
       }
     });
     
-    // Render the reCAPTCHA widget
-    verifier.render();
+    // No need to explicitly render - Firebase handles this
+    // But we'll keep it for backward compatibility
+    verifier.render().catch(e => console.warn("Render warning (can be ignored):", e));
     
     return { verifier, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error initializing reCAPTCHA:", error);
     return { verifier: null, error }
   }
@@ -255,12 +253,88 @@ export const sendOTP = async (phoneNumber: string) => {
     
     // For real phone numbers, use Firebase
     console.log("Sending OTP via Firebase...");
-    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-    window.confirmationResult = confirmationResult;
-    console.log("OTP sent successfully");
-    return { success: true, error: null };
-  } catch (error) {
+    
+    try {
+      // With Firebase SDK v9+, this will use invisible reCAPTCHA automatically
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      window.confirmationResult = confirmationResult;
+      console.log("OTP sent successfully");
+      return { success: true, error: null };
+    } catch (err) {
+      // Handle specific error cases
+      console.error("Error in signInWithPhoneNumber:", err);
+      
+      // Type check the error before accessing properties
+      if (err && typeof err === 'object' && 'code' in err && err.code === 'auth/captcha-check-failed') {
+        console.log("Attempting to refresh reCAPTCHA and retry...");
+        
+        try {
+          // Try to reset the reCAPTCHA if possible
+          if (window.recaptchaVerifier && typeof window.recaptchaVerifier.clear === 'function') {
+            window.recaptchaVerifier.clear();
+          }
+          
+          // Re-initialize the reCAPTCHA with default container ID
+          const { verifier } = initRecaptchaVerifier("recaptcha-container") as any;
+          window.recaptchaVerifier = verifier;
+          
+          // Try again with the new verifier
+          const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier);
+          window.confirmationResult = confirmationResult;
+          console.log("OTP sent successfully after retry");
+          return { success: true, error: null };
+        } catch (retryErr) {
+          console.error("Retry also failed:", retryErr);
+          throw retryErr;
+        }
+      }
+      
+      throw err;
+    }
+  } catch (error: any) {
     console.error("Error sending OTP:", error);
+    
+    // Handle specific error cases
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'auth/captcha-check-failed') {
+      console.log("reCAPTCHA verification failed. Attempting to reset...");
+      
+      try {
+        // Try to reset the reCAPTCHA
+        if (window.recaptchaVerifier) {
+          if (typeof window.recaptchaVerifier.clear === 'function') {
+            window.recaptchaVerifier.clear();
+          }
+          
+          // Re-initialize with minimal configuration
+          // Use "recaptcha-container" as the default container ID
+          const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "invisible"
+          });
+          
+          window.recaptchaVerifier = verifier;
+        }
+        
+        return { 
+          success: false, 
+          error: new Error("Verification failed. Please try again.") 
+        };
+      } catch (resetError) {
+        console.error("Failed to reset reCAPTCHA:", resetError);
+        return { 
+          success: false, 
+          error: new Error("Failed to reset verification. Please refresh the page and try again.") 
+        };
+      }
+    }
+    
+    // For network errors, provide a more user-friendly message
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'auth/network-request-failed') {
+      return { 
+        success: false, 
+        error: new Error("Network error. Please check your internet connection and try again.") 
+      };
+    }
+    
     return { success: false, error };
   }
 }
@@ -297,7 +371,7 @@ export const verifyOTP = async (otp: string) => {
     
     // result is UserCredential with a 'user' property
     return { success: true, user: result.user, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error verifying OTP:", error);
     return { success: false, error }
   }
@@ -310,7 +384,7 @@ export const checkEmailExists = async (email: string) => {
     // We'll use the fetchSignInMethodsForEmail method which returns available sign-in methods for an email
     const methods = await fetchSignInMethodsForEmail(auth, email)
     return methods.length > 0
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error checking email existence:", error)
     return false
   }
@@ -345,7 +419,7 @@ export const resetPassword = async (email: string) => {
     
     console.log("Password reset email sent successfully");
     return { success: true, error: null }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in resetPassword:", error);
     return { success: false, error }
   }
@@ -356,7 +430,7 @@ export const signOut = async () => {
   try {
     await firebaseSignOut(auth)
     return { success: true, error: null }
-  } catch (error) {
+  } catch (error: any) {
     return { success: false, error }
   }
 }
