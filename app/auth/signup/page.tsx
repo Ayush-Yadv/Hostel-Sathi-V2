@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Phone, Loader2 } from "lucide-react"
 import { signUp, initRecaptchaVerifier, sendOTP, verifyOTP } from "@/lib/auth"
+import { auth } from "@/lib/firebase/config"
 import type { ChangeEvent } from "react"
 import { FormEvent } from "react"
 import CommonNavbar from "@/components/common-navbar"
@@ -86,7 +87,7 @@ export default function SignupPage() {
         phoneNumber = `+91${phoneNumber}` // Assuming India country code
       }
 
-      // Initialize reCAPTCHA verifier
+      // Initialize reCAPTCHA verifier - Firebase SDK v9+ uses invisible reCAPTCHA automatically
       if (!window.recaptchaVerifier) {
         try {
           console.log("Initializing reCAPTCHA verifier...");
@@ -94,16 +95,29 @@ export default function SignupPage() {
           
           if (error) {
             console.error("Failed to initialize reCAPTCHA:", error);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Failed to initialize reCAPTCHA",
-            });
-            throw new Error("Failed to initialize reCAPTCHA");
+            
+            // Try a fallback approach with minimal configuration
+            console.log("Attempting fallback reCAPTCHA initialization...");
+            try {
+              const RecaptchaVerifier = (await import("firebase/auth")).RecaptchaVerifier;
+              const fallbackVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+                size: "invisible"
+              });
+              window.recaptchaVerifier = fallbackVerifier;
+              console.log("Fallback reCAPTCHA initialized successfully");
+            } catch (fallbackError) {
+              console.error("Fallback initialization also failed:", fallbackError);
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to initialize verification system",
+              });
+              throw new Error("Failed to initialize reCAPTCHA");
+            }
+          } else {
+            console.log("reCAPTCHA verifier initialized successfully");
+            window.recaptchaVerifier = verifier;
           }
-          
-          console.log("reCAPTCHA verifier initialized successfully");
-          window.recaptchaVerifier = verifier;
         } catch (error) {
           console.error("Exception initializing reCAPTCHA:", error);
           toast({
@@ -553,8 +567,8 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {/* reCAPTCHA Container */}
-          <div id="recaptcha-container" ref={recaptchaContainerRef} className="mt-4 flex justify-center"></div>
+          {/* reCAPTCHA Container - kept minimal for Firebase SDK v9+ automatic handling */}
+          <div id="recaptcha-container" ref={recaptchaContainerRef} className="mt-1" style={{ height: '1px', opacity: 0, position: 'absolute', bottom: 0 }}></div>
         </div>
       </main>
 

@@ -3,18 +3,35 @@ import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDsqnXy6IhqbC3BN64M04FBCAd9T2trDnw",
+  authDomain: "hostel-sathi-alpha-version.firebaseapp.com",
+  projectId: "hostel-sathi-alpha-version",
+  storageBucket: "hostel-sathi-alpha-version.appspot.com",
+  messagingSenderId: "360051431400",
+  appId: "1:360051431400:web:f466fd6683e7b82d46765d",
+  measurementId: "G-B18CZ5818W"
 }
+
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 const db = getFirestore(app)
 const auth = getAuth(app)
+
+// Configure auth for better compatibility with reCAPTCHA
+auth.useDeviceLanguage(); // Use the device's language for SMS
+
+// Log current domain for debugging
+if (typeof window !== 'undefined') {
+  const currentDomain = window.location.hostname;
+  console.log(`Current domain: ${currentDomain}`);
+  
+  // Check if current domain matches auth domain
+  if (firebaseConfig.authDomain && !firebaseConfig.authDomain.includes(currentDomain) && 
+      currentDomain !== 'localhost' && currentDomain !== '127.0.0.1') {
+    console.warn(`Warning: Current domain (${currentDomain}) may not be authorized in Firebase. ` +
+                `Auth domain is set to: ${firebaseConfig.authDomain}`);
+  }
+}
 
 export { app, db, auth } 
