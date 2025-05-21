@@ -19,8 +19,13 @@ export const signUp = async (email: string, password: string, name?: string, pho
   try {
     console.log("Signing up user with email:", email);
     
-    // Check if this is a test phone number (for development only)
-    const isTestPhone = phoneNumber && (
+    // Check if we're in development mode (localhost)
+    const isDevelopment = typeof window !== 'undefined' && 
+                         (window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1');
+    
+    // In development, we can still use test phone numbers for convenience
+    const isTestPhone = isDevelopment && phoneNumber && (
       phoneNumber === "+919142531909" || 
       phoneNumber === "+919499459310" ||
       phoneNumber.includes("9142531909") ||
@@ -30,7 +35,7 @@ export const signUp = async (email: string, password: string, name?: string, pho
     let user;
     
     // For test phone numbers in development, we can create a user directly
-    if (process.env.NODE_ENV === 'development' && isTestPhone) {
+    if (isDevelopment && isTestPhone) {
       console.log("Using test phone number for signup");
       
       try {
@@ -49,7 +54,7 @@ export const signUp = async (email: string, password: string, name?: string, pho
         };
       }
     } else {
-      // For real users, use Firebase Auth
+      // For real users, use Firebase Auth with Blaze plan
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       user = userCredential.user;
     }
@@ -146,11 +151,9 @@ export const signInWithGoogle = async () => {
 // Initialize reCAPTCHA verifier
 export const initRecaptchaVerifier = (containerId: string) => {
   try {
-    // Check if we're in development mode to use invisible reCAPTCHA
-    const isDevMode = process.env.NODE_ENV === 'development';
-    
+    // Use invisible reCAPTCHA for better user experience
     const verifier = new RecaptchaVerifier(auth, containerId, {
-      size: isDevMode ? "invisible" : "normal",
+      size: "invisible",
       callback: () => {
         // reCAPTCHA solved, allow signInWithPhoneNumber.
         console.log("reCAPTCHA verified");
@@ -179,8 +182,16 @@ export const sendOTP = async (phoneNumber: string) => {
       phoneNumber = `+91${phoneNumber}` // Assuming India country code
     }
 
-    // Check if this is a test phone number
-    const isTestPhone = phoneNumber === "+919142531909" || phoneNumber === "+919499459310";
+    // Check if we're in development mode (localhost)
+    const isDevelopment = typeof window !== 'undefined' && 
+                         (window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1');
+    
+    // In development, we can still use test phone numbers for convenience
+    const isTestPhone = isDevelopment && (
+      phoneNumber === "+919142531909" || 
+      phoneNumber === "+919499459310"
+    );
     
     console.log(`Attempting to send OTP to ${phoneNumber}. Test phone: ${isTestPhone}`);
 
@@ -196,7 +207,7 @@ export const sendOTP = async (phoneNumber: string) => {
     
     // For test phone numbers in development, we can simulate success
     // This is just for development convenience
-    if (process.env.NODE_ENV === 'development' && isTestPhone) {
+    if (isDevelopment && isTestPhone) {
       console.log("Using test phone number. Simulating OTP sent.");
       // Store a mock confirmation result for the test phone
       window.confirmationResult = {
