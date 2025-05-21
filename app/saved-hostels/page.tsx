@@ -179,7 +179,7 @@ export default function SavedHostelsPage() {
             >
               <div className="relative h-48">
                 <Image
-                  src="/placeholder.svg?height=300&width=400"
+                  src={hostel.images[0] || "/placeholder.svg?height=300&width=400"}
                   alt={hostel.name}
                   fill
                   className="object-cover"
