@@ -56,11 +56,7 @@ export default function HomePage() {
 
   // State for carousel
   const [activeSlide, setActiveSlide] = useState(0)
-  const [activeReviewPage, setActiveReviewPage] = useState(0)
   const [isAutoScrolling, setIsAutoScrolling] = useState(true)
-  const reviewTrackRef = useRef<HTMLDivElement>(null)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -78,152 +74,83 @@ export default function HomePage() {
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
+  // Review data type
+  type Review = {
+    name: string
+    initials: string
+    color: string
+    rating: number
+    review: string
+    college: string
   }
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
-
-    if (isLeftSwipe) {
-      goToReviewPage((activeReviewPage + 1) % 5)
+  // Review data
+  const reviews: Review[] = [
+    {
+      name: "Ayush Singh",
+      initials: "AS",
+      color: "#FF69B4",
+      rating: 3,
+      review: "Great hostel experience! The facilities are well-maintained, and the staff is very helpful. The location near my college saves a lot of commute time.",
+      college: "B.Tech, GCET"
+    },
+    {
+      name: "Sraddha Kumari",
+      initials: "SK",
+      color: "#5A00F0",
+      rating: 4,
+      review: "The hostel is clean and well-maintained. The staff is friendly and responsive to our needs. I feel safe and comfortable here.",
+      college: "B.Tech, NIET"
+    },
+    {
+      name: "Rahul Kumar",
+      initials: "RK",
+      color: "#FF9E80",
+      rating: 5,
+      review: "Affordable and convenient. The hostel has good amenities and is close to my college. The food is also quite good.",
+      college: "BBA, G L BAJAJ"
+    },
+    {
+      name: "Ananya Patel",
+      initials: "AP",
+      color: "#4E54C8",
+      rating: 3,
+      review: "The location is perfect, but the facilities could be better. The staff is helpful though and they address issues quickly.",
+      college: "BCA, GNIOT"
+    },
+    {
+      name: "Vikram Gupta",
+      initials: "VG",
+      color: "#11998E",
+      rating: 4,
+      review: "Great value for money. The rooms are spacious and the common areas are well-maintained. Highly recommended!",
+      college: "M.Tech, ABES"
+    },
+    {
+      name: "Neha Joshi",
+      initials: "NJ",
+      color: "#8E2DE2",
+      rating: 5,
+      review: "I've been staying here for two years now. The security is excellent and the environment is very conducive for studies.",
+      college: "MBA, KIET"
+    },
+    {
+      name: "Priya Kumar",
+      initials: "PK",
+      color: "#FF6B6B",
+      rating: 5,
+      review: "The hostel provides excellent study environment. The library and study rooms are well-equipped. The staff is very supportive of our academic needs.",
+      college: "B.Tech, IMS"
+    },
+    {
+      name: "Rohan Sharma",
+      initials: "RS",
+      color: "#4CAF50",
+      rating: 4,
+      review: "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained.",
+      college: "B.Tech, JSS"
     }
-    if (isRightSwipe) {
-      goToReviewPage((activeReviewPage - 1 + 5) % 5)
-    }
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024)
-    }
-
-    // Set initial value
-    handleResize()
-
-    // Add event listener
-    window.addEventListener("resize", handleResize)
-
-    // Check auth state
-    const unsubscribe = onAuthChange(async (user) => {
-      setIsLoggedIn(!!user)
-      setCurrentUser(user)
-      
-      if (user) {
-        // Get saved hostels from Firestore instead of localStorage
-        try {
-          const result = await getSavedHostels(user.uid)
-          if (result.savedHostels) {
-            setSavedHostels(result.savedHostels)
-          }
-        } catch (error) {
-          console.error("Error fetching saved hostels:", error)
-        }
-      } else {
-        setSavedHostels([])
-      }
-    })
-
-    // Improved scroll animation for the path in "What is Hostel Sathi" section
-    const handleScroll = () => {
-      const section = document.getElementById("what-is-hostel-sathi")
-      if (section) {
-        const sectionTop = section.getBoundingClientRect().top
-        const windowHeight = window.innerHeight
-
-        // Trigger animation when section is 25% in view
-        if (sectionTop < windowHeight * 0.75) {
-          const desktopPath = document.getElementById("animated-path-desktop")
-          const mobilePath = document.getElementById("animated-path-mobile")
-
-          if (desktopPath && !desktopPath.classList.contains("animate")) {
-            desktopPath.classList.add("animate")
-          }
-          if (mobilePath && !mobilePath.classList.contains("animate")) {
-            mobilePath.classList.add("animate")
-          }
-        }
-      }
-    }
-
-    // Add scroll event listener
-    window.addEventListener("scroll", handleScroll)
-
-    // Trigger once on load to check if section is already in view
-    setTimeout(handleScroll, 300)
-
-    // Clean up
-    return () => {
-      window.removeEventListener("resize", handleResize)
-      window.removeEventListener("scroll", handleScroll)
-      unsubscribe()
-    }
-  }, [])
-
-  // Auto-advance carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % 5)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  // Auto-scroll reviews
-  useEffect(() => {
-    if (!isAutoScrolling) return
-
-    const interval = setInterval(() => {
-      goToReviewPage((activeReviewPage + 1) % 5)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [activeReviewPage, isAutoScrolling])
-
-  // Handle hero carousel navigation
-  const goToSlide = (index: number) => {
-    setActiveSlide(index)
-  }
-
-  // Handle review carousel navigation
-  const goToReviewPage = (index: number) => {
-    setActiveReviewPage(index)
-    setIsAutoScrolling(false) // Pause auto-scroll when manually navigating
-
-    // Get the review track element
-    const reviewTrack = reviewTrackRef.current
-    if (reviewTrack) {
-      // If going to the last slide, prepare for looping back to first
-      if (index === 4) {
-        // After transition completes, instantly (no animation) go back to first slide
-        setTimeout(() => {
-          reviewTrack.classList.remove("transition-transform")
-          setActiveReviewPage(0)
-
-          // Force reflow to apply the instant change
-          void reviewTrack.offsetWidth
-
-          // Re-enable transitions for next normal navigation
-          setTimeout(() => {
-            reviewTrack.classList.add("transition-transform")
-          }, 50)
-        }, 300) // Wait for transition to complete
-      }
-    }
-
-    // Resume auto-scroll after 10 seconds of inactivity
-    setTimeout(() => {
-      setIsAutoScrolling(true)
-    }, 10000)
-  }
+  ]
 
   // Handle review carousel navigation
   const scrollReviews = (direction: "prev" | "next") => {
@@ -234,6 +161,11 @@ export default function HomePage() {
         behavior: "smooth",
       })
     }
+  }
+
+  // Handle hero carousel navigation
+  const goToSlide = (index: number) => {
+    setActiveSlide(index)
   }
 
   // Toggle mobile menu
@@ -322,6 +254,93 @@ export default function HomePage() {
   // Filter hostels and PGs
   const featuredHostels = hostelsList.filter((hostel) => hostel.type === "hostel").slice(0, 3)
   const featuredPGs = hostelsList.filter((hostel) => hostel.type === "pg").slice(0, 3)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024)
+    }
+
+    // Set initial value
+    handleResize()
+
+    // Add event listener
+    window.addEventListener("resize", handleResize)
+
+    // Check auth state
+    const unsubscribe = onAuthChange(async (user) => {
+      setIsLoggedIn(!!user)
+      setCurrentUser(user)
+      
+      if (user) {
+        // Get saved hostels from Firestore instead of localStorage
+        try {
+          const result = await getSavedHostels(user.uid)
+          if (result.savedHostels) {
+            setSavedHostels(result.savedHostels)
+          }
+        } catch (error) {
+          console.error("Error fetching saved hostels:", error)
+        }
+      } else {
+        setSavedHostels([])
+      }
+    })
+
+    // Improved scroll animation for the path in "What is Hostel Sathi" section
+    const handleScroll = () => {
+      const section = document.getElementById("what-is-hostel-sathi")
+      if (section) {
+        const sectionTop = section.getBoundingClientRect().top
+        const windowHeight = window.innerHeight
+
+        // Trigger animation when section is 25% in view
+        if (sectionTop < windowHeight * 0.75) {
+          const desktopPath = document.getElementById("animated-path-desktop")
+          const mobilePath = document.getElementById("animated-path-mobile")
+
+          if (desktopPath && !desktopPath.classList.contains("animate")) {
+            desktopPath.classList.add("animate")
+          }
+          if (mobilePath && !mobilePath.classList.contains("animate")) {
+            mobilePath.classList.add("animate")
+          }
+        }
+      }
+    }
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll)
+
+    // Trigger once on load to check if section is already in view
+    setTimeout(handleScroll, 300)
+
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      window.removeEventListener("scroll", handleScroll)
+      unsubscribe()
+    }
+  }, [])
+
+  // Auto-advance carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % 5)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Auto-scroll reviews
+  useEffect(() => {
+    if (!isAutoScrolling) return
+
+    const interval = setInterval(() => {
+      scrollReviews("next")
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [isAutoScrolling])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -876,72 +895,7 @@ export default function HomePage() {
 
             <div className="review-carousel overflow-x-auto hide-scrollbar" ref={reviewCarouselRef}>
               <div className="flex gap-4 pb-4 w-full">
-                {[
-                  {
-                    name: "Ayush Singh",
-                    initials: "AS",
-                    color: "#FF69B4",
-                    rating: 3,
-                    review: "Great hostel experience! The facilities are well-maintained, and the staff is very helpful. The location near my college saves a lot of commute time.",
-                    college: "B.Tech, GCET"
-                  },
-                  {
-                    name: "Sraddha Kumari",
-                    initials: "SK",
-                    color: "#5A00F0",
-                    rating: 4,
-                    review: "The hostel is clean and well-maintained. The staff is friendly and responsive to our needs. I feel safe and comfortable here.",
-                    college: "B.Tech, NIET"
-                  },
-                  {
-                    name: "Rahul Kumar",
-                    initials: "RK",
-                    color: "#FF9E80",
-                    rating: 5,
-                    review: "Affordable and convenient. The hostel has good amenities and is close to my college. The food is also quite good.",
-                    college: "BBA, G L BAJAJ"
-                  },
-                  {
-                    name: "Ananya Patel",
-                    initials: "AP",
-                    color: "#4E54C8",
-                    rating: 3,
-                    review: "The location is perfect, but the facilities could be better. The staff is helpful though and they address issues quickly.",
-                    college: "BCA, GNIOT"
-                  },
-                  {
-                    name: "Vikram Gupta",
-                    initials: "VG",
-                    color: "#11998E",
-                    rating: 4,
-                    review: "Great value for money. The rooms are spacious and the common areas are well-maintained. Highly recommended!",
-                    college: "M.Tech, ABES"
-                  },
-                  {
-                    name: "Neha Joshi",
-                    initials: "NJ",
-                    color: "#8E2DE2",
-                    rating: 5,
-                    review: "I've been staying here for two years now. The security is excellent and the environment is very conducive for studies.",
-                    college: "MBA, KIET"
-                  },
-                  {
-                    name: "Priya Kumar",
-                    initials: "PK",
-                    color: "#FF6B6B",
-                    rating: 5,
-                    review: "The hostel provides excellent study environment. The library and study rooms are well-equipped. The staff is very supportive of our academic needs.",
-                    college: "B.Tech, IMS"
-                  },
-                  {
-                    name: "Rohan Sharma",
-                    initials: "RS",
-                    color: "#4CAF50",
-                    rating: 4,
-                    review: "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained.",
-                    college: "B.Tech, JSS"
-                  }
-                ].map((review, index) => (
+                {reviews.map((review, index) => (
                   <div
                     key={index}
                     className="min-w-[300px] md:min-w-[350px] lg:min-w-[400px] bg-white p-6 rounded-lg shadow-md flex flex-col"
