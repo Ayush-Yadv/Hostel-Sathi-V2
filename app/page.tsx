@@ -41,6 +41,7 @@ import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
 import { saveContactForm } from '../lib/contactform';
 import ContactForm from "@/components/ui/contactform"
+import { getFirstAvailableImage } from "@/lib/utils"
 
 export default function HomePage() {
   const router = useRouter()
@@ -664,8 +665,14 @@ export default function HomePage() {
                     href={`/hostels?college=${encodeURIComponent(college.name)}`}
                     className="min-w-[150px] md:min-w-[200px] lg:min-w-[250px] xl:min-w-[280px] bg-white rounded-lg shadow-md transform transition-transform hover:scale-105"
                   >
-                    <div className="h-24 md:h-32 lg:h-36 bg-gradient-to-br from-[#5A00F0] to-[#B366FF] rounded-t-lg flex items-center justify-center">
-                      <School size={40} className="text-white" />
+                    <div className="h-24 md:h-32 lg:h-36 bg-gradient-to-br from-[#5A00F0] to-[#B366FF] rounded-t-lg flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={college.image}
+                        alt={college.name}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="p-3 md:p-4">
                       <p className="text-center font-medium text-sm md:text-base lg:text-lg">{college.name}</p>
@@ -697,7 +704,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={hostel.images[0] || "/placeholder.svg?height=300&width=400"}
+                      src={getFirstAvailableImage(hostel.images)}
                       alt={hostel.name}
                       fill
                       className="object-cover"
@@ -771,7 +778,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={pg.images[0] || "/placeholder.svg?height=300&width=400"}
+                      src={getFirstAvailableImage(pg.images)}
                       alt={pg.name}
                       fill
                       className="object-cover"

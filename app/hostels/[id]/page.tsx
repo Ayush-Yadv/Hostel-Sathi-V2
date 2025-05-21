@@ -17,6 +17,7 @@ import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { User } from "firebase/auth"
 import { reviewsList, type Review } from "@/data/reviews"
+import { getAvailableImages, getFirstAvailableImage } from "@/lib/utils"
 
 import {
   Menu,
@@ -230,7 +231,10 @@ export default function HostelDetailsPage() {
   }
 
   // Toggle save hostel
-  const toggleSaveHostel = async () => {
+  const toggleSaveHostel = async (id: number, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     if (!isLoggedIn) {
       // Store the current page URL for redirection after login
       localStorage.setItem(
@@ -286,7 +290,7 @@ export default function HostelDetailsPage() {
     )
   }
 
-  const hostelImages = hostel.images.filter(img => img).map((src, index) => ({
+  const hostelImages = getAvailableImages(hostel.images).map((src, index) => ({
     id: index + 1,
     src: src,
     alt: `${hostel.name} - Image ${index + 1}`,
@@ -305,7 +309,7 @@ export default function HostelDetailsPage() {
             <section className="relative bg-black">
               <div className="relative h-64 md:h-96 lg:h-[500px]">
                 <Image
-                  src={hostel.images[activeImageIndex] || "/placeholder.svg"}
+                  src={hostelImages[activeImageIndex]?.src || "/placeholder.svg"}
                   alt={`${hostel.name} - Image ${activeImageIndex + 1}`}
                   fill
                   className="object-cover"
@@ -327,7 +331,7 @@ export default function HostelDetailsPage() {
 
                 {/* Save Button */}
                 <button
-                  onClick={toggleSaveHostel}
+                  onClick={(e) => toggleSaveHostel(id, e)}
                   className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md z-10"
                 >
                   <Heart
@@ -336,47 +340,53 @@ export default function HostelDetailsPage() {
                   />
                 </button>
 
-                {/* Image Navigation */}
-                <button
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-                  onClick={prevImage}
-                >
-                  <ChevronLeft className="text-[#5A00F0]" />
-                </button>
-                <button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
-                  onClick={nextImage}
-                >
-                  <ChevronRight className="text-[#5A00F0]" />
-                </button>
-
-                {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                  {activeImageIndex + 1} / {hostel.images.filter(img => img).length}
-                </div>
-              </div>
-
-              {/* Thumbnail Gallery */}
-              <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
-                <div className="flex gap-2">
-                  {hostel.images.filter(img => img).map((image, index) => (
+                {/* Image Navigation - Only show if there are multiple images */}
+                {hostelImages.length > 1 && (
+                  <>
                     <button
-                      key={index}
-                      className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
-                        activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
-                      }`}
-                      onClick={() => goToImage(index)}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                      onClick={prevImage}
                     >
-                      <Image
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+                      <ChevronLeft className="text-[#5A00F0]" />
                     </button>
-                  ))}
-                </div>
+                    <button
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md z-10"
+                      onClick={nextImage}
+                    >
+                      <ChevronRight className="text-[#5A00F0]" />
+                    </button>
+
+                    {/* Image Counter */}
+                    <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                      {activeImageIndex + 1} / {hostelImages.length}
+                    </div>
+                  </>
+                )}
               </div>
+
+              {/* Thumbnail Gallery - Only show if there are multiple images */}
+              {hostelImages.length > 1 && (
+                <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
+                  <div className="flex gap-2">
+                    {hostelImages.map((image, index) => (
+                      <button
+                        key={index}
+                        className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
+                          activeImageIndex === index ? "ring-2 ring-[#5A00F0]" : "opacity-70"
+                        }`}
+                        onClick={() => goToImage(index)}
+                      >
+                        <Image
+                          src={image.src}
+                          alt={image.alt}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* Hostel Details */}
@@ -655,6 +665,103 @@ export default function HostelDetailsPage() {
                 </div>
               </div>
             </section>
+
+            {/* Recommended Hostels Section */}
+            <section className="py-8 px-4 bg-gray-50">
+              <div className="max-w-6xl mx-auto">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Recommended for You</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {hostelsList
+                    .filter(h => h.id !== hostel.id && !savedHostels.includes(h.id))
+                    .slice(0, 3)
+                    .map((recommendedHostel) => (
+                      <Link
+                        key={recommendedHostel.id}
+                        href={`/hostels/${recommendedHostel.id}${collegeParam ? `?college=${encodeURIComponent(collegeParam)}` : ""}`}
+                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      >
+                        <div className="relative h-48">
+                          <Image
+                            src={getFirstAvailableImage(recommendedHostel.images)}
+                            alt={recommendedHostel.name}
+                            fill
+                            className="object-cover"
+                          />
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleSaveHostel(recommendedHostel.id, e);
+                            }}
+                            className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md z-10"
+                          >
+                            <Heart
+                              size={20}
+                              className={savedHostels.includes(recommendedHostel.id) ? "fill-[#FF6B6B] text-[#FF6B6B]" : "text-gray-400"}
+                            />
+                          </button>
+                          <div className="absolute top-3 left-3 flex gap-2">
+                            <span className="bg-[#5A00F0] text-white text-xs px-2 py-1 rounded-full uppercase">
+                              {recommendedHostel.type}
+                            </span>
+                            <span
+                              className={`text-white text-xs px-2 py-1 rounded-full uppercase ${
+                                recommendedHostel.gender === "boys"
+                                  ? "bg-blue-500"
+                                  : recommendedHostel.gender === "girls"
+                                    ? "bg-pink-500"
+                                    : "bg-purple-500"
+                              }`}
+                            >
+                              {recommendedHostel.gender}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-xl font-bold">{recommendedHostel.name}</h3>
+                            <div className="flex items-center bg-[#5A00F0] text-white px-2 py-1 rounded">
+                              <Star size={14} className="fill-white mr-1" />
+                              <span>{recommendedHostel.rating}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center mb-3">
+                            <MapPin size={16} className="text-gray-500 mr-1" />
+                            <span className="text-gray-500 text-sm">{recommendedHostel.address}</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {recommendedHostel.amenities.slice(0, 3).map((amenity, index) => (
+                              <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                {amenity}
+                              </span>
+                            ))}
+                            {recommendedHostel.amenities.length > 3 && (
+                              <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                +{recommendedHostel.amenities.length - 3} more
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="text-2xl font-bold text-[#5A00F0]">₹{recommendedHostel.price}</span>
+                              <span className="text-gray-500 text-sm">/month</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              </div>
+            </section>
+
+            {/* WhatsApp Button */}
+            <WhatsAppButton />
           </>
         ) : (
           <div className="flex items-center justify-center h-full">
@@ -662,9 +769,6 @@ export default function HostelDetailsPage() {
           </div>
         )}
       </main>
-
-      {/* WhatsApp Button */}
-      <WhatsAppButton />
 
       {/* Footer */}
       <CommonFooter />
