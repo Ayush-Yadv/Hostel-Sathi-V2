@@ -48,8 +48,6 @@ export const hostelsList: Hostel[] = [
       "/hostels/rghs/6.jpg",
       "/hostels/rghs/7.jpg",
       "/hostels/rghs/8.jpg",
-      "/hostels/rghs/9.jpg",
-      "/hostels/rghs/10.jpg"
     ],
     rating: 4.5,
     reviews: 120,
@@ -78,15 +76,9 @@ export const hostelsList: Hostel[] = [
     amenities: ["WiFi", "AC Rooms", "Gym", "Mess", "TV Lounge", "Security"],
     images: [
       "/hostels/rahs/1.jpg",
-      "/hostels/rahs/2.jpg",
-      "/hostels/rahs/3.jpg",
-      "/hostels/rahs/4.jpg",
-      "/hostels/rahs/5.jpg",
-      "/hostels/rahs/6.jpg",
-      "/hostels/rahs/7.jpg",
-      "/hostels/rahs/8.jpg",
-      "/hostels/rahs/9.jpg",
-      "/hostels/rahs/10.jpg"
+      "/hostels/rahs/2.webp",
+      "/hostels/rahs/3.webp",
+      "/hostels/rahs/4.webp"
     ],
     rating: 4.2,
     reviews: 85,
@@ -120,10 +112,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/snhs/4.jpg",
       "/hostels/snhs/5.jpg",
       "/hostels/snhs/6.jpg",
-      "/hostels/snhs/7.jpg",
-      "/hostels/snhs/8.jpg",
-      "/hostels/snhs/9.jpg",
-      "/hostels/snhs/10.jpg"
+      "/hostels/snhs/7.jpg"
     ],
     rating: 4.0,
     reviews: 95,
@@ -155,12 +144,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/whths/2.jpg",
       "/hostels/whths/3.jpg",
       "/hostels/whths/4.jpg",
-      "/hostels/whths/5.jpg",
-      "/hostels/whths/6.jpg",
-      "/hostels/whths/7.jpg",
-      "/hostels/whths/8.jpg",
-      "/hostels/whths/9.jpg",
-      "/hostels/whths/10.jpg"
+      "/hostels/whths/5.jpg"
     ],
     rating: 4.7,
     reviews: 150,
@@ -232,9 +216,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/bluhs/5.jpg",
       "/hostels/bluhs/6.jpg",
       "/hostels/bluhs/7.jpg",
-      "/hostels/bluhs/8.jpg",
-      "/hostels/bluhs/9.jpg",
-      "/hostels/bluhs/10.jpg"
+      "/hostels/bluhs/8.jpg"
     ],
     rating: 4.4,
     reviews: 130,
@@ -270,8 +252,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/maghs/6.jpg",
       "/hostels/maghs/7.jpg",
       "/hostels/maghs/8.jpg",
-      "/hostels/maghs/9.jpg",
-      "/hostels/maghs/10.jpg"
+      "/hostels/maghs/9.jpg"
     ],
     rating: 4.1,
     reviews: 90,
@@ -341,11 +322,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/whihs/3.jpg",
       "/hostels/whihs/4.jpg",
       "/hostels/whihs/5.jpg",
-      "/hostels/whihs/6.jpg",
-      "/hostels/whihs/7.jpg",
-      "/hostels/whihs/8.jpg",
-      "/hostels/whihs/9.jpg",
-      "/hostels/whihs/10.jpg"
+      "/hostels/whihs/6.jpg"
     ],
     rating: 4.5,
     reviews: 125,
@@ -378,11 +355,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/jitghs/3.jpg",
       "/hostels/jitghs/4.jpg",
       "/hostels/jitghs/5.jpg",
-      "/hostels/jitghs/6.jpg",
-      "/hostels/jitghs/7.jpg",
-      "/hostels/jitghs/8.jpg",
-      "/hostels/jitghs/9.jpg",
-      "/hostels/jitghs/10.jpg"
+      "/hostels/jitghs/6.jpg"
     ],
     rating: 4.0,
     reviews: 85,
@@ -414,12 +387,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/mohanhs/2.jpg",
       "/hostels/mohanhs/3.jpg",
       "/hostels/mohanhs/4.jpg",
-      "/hostels/mohanhs/5.jpg",
-      "/hostels/mohanhs/6.jpg",
-      "/hostels/mohanhs/7.jpg",
-      "/hostels/mohanhs/8.jpg",
-      "/hostels/mohanhs/9.jpg",
-      "/hostels/mohanhs/10.jpg"
+      "/hostels/mohanhs/5.jpg"
     ],
     rating: 4.2,
     reviews: 120,
@@ -454,9 +422,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/mohanhs-girls/5.jpg",
       "/hostels/mohanhs-girls/6.jpg",
       "/hostels/mohanhs-girls/7.jpg",
-      "/hostels/mohanhs-girls/8.jpg",
-      "/hostels/mohanhs-girls/9.jpg",
-      "/hostels/mohanhs-girls/10.jpg"
+      "/hostels/mohanhs-girls/8.jpg"
     ],
     rating: 4.2,
     reviews: 120,
@@ -486,14 +452,7 @@ export const hostelsList: Hostel[] = [
     images: [
       "/hostels/sinhs/1.jpg",
       "/hostels/sinhs/2.jpg",
-      "/hostels/sinhs/3.jpg",
-      "/hostels/sinhs/4.jpg",
-      "/hostels/sinhs/5.jpg",
-      "/hostels/sinhs/6.jpg",
-      "/hostels/sinhs/7.jpg",
-      "/hostels/sinhs/8.jpg",
-      "/hostels/sinhs/9.jpg",
-      "/hostels/sinhs/10.jpg"
+      "/hostels/sinhs/3.jpg"
     ],
     rating: 4.1,
     reviews: 95,
@@ -524,13 +483,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/vijayhs/1.jpg",
       "/hostels/vijayhs/2.jpg",
       "/hostels/vijayhs/3.jpg",
-      "/hostels/vijayhs/4.jpg",
-      "/hostels/vijayhs/5.jpg",
-      "/hostels/vijayhs/6.jpg",
-      "/hostels/vijayhs/7.jpg",
-      "/hostels/vijayhs/8.jpg",
-      "/hostels/vijayhs/9.jpg",
-      "/hostels/vijayhs/10.jpg"
+      "/hostels/vijayhs/4.jpg"
     ],
     rating: 3.9,
     reviews: 80,
@@ -561,13 +514,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/manyahs/1.jpg",
       "/hostels/manyahs/2.jpg",
       "/hostels/manyahs/3.jpg",
-      "/hostels/manyahs/4.jpg",
-      "/hostels/manyahs/5.jpg",
-      "/hostels/manyahs/6.jpg",
-      "/hostels/manyahs/7.jpg",
-      "/hostels/manyahs/8.jpg",
-      "/hostels/manyahs/9.jpg",
-      "/hostels/manyahs/10.jpg"
+      "/hostels/manyahs/4.jpg"
     ],
     rating: 4.0,
     reviews: 90,
@@ -599,12 +546,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/manyahs-girls/2.jpg",
       "/hostels/manyahs-girls/3.jpg",
       "/hostels/manyahs-girls/4.jpg",
-      "/hostels/manyahs-girls/5.jpg",
-      "/hostels/manyahs-girls/6.jpg",
-      "/hostels/manyahs-girls/7.jpg",
-      "/hostels/manyahs-girls/8.jpg",
-      "/hostels/manyahs-girls/9.jpg",
-      "/hostels/manyahs-girls/10.jpg"
+      "/hostels/manyahs-girls/5.jpg"
     ],
     rating: 4.0,
     reviews: 90,
@@ -640,8 +582,7 @@ export const hostelsList: Hostel[] = [
       "/hostels/omhs/6.jpg",
       "/hostels/omhs/7.jpg",
       "/hostels/omhs/8.jpg",
-      "/hostels/omhs/9.jpg",
-      "/hostels/omhs/10.jpg"
+      "/hostels/omhs/9.jpg"
     ],
     rating: 4.2,
     reviews: 100,
@@ -669,16 +610,16 @@ export const hostelsList: Hostel[] = [
       "PREHs PG provides comfortable accommodation exclusively for girls. Known for its safe environment and good facilities.",
     amenities: ["WiFi", "AC Rooms", "Mess", "Laundry", "Security"],
     images: [
-      "/hostels/prehs/1.jpg",
-      "/hostels/prehs/2.jpg",
-      "/hostels/prehs/3.jpg",
-      "/hostels/prehs/4.jpg",
-      "/hostels/prehs/5.jpg",
-      "/hostels/prehs/6.jpg",
-      "/hostels/prehs/7.jpg",
-      "/hostels/prehs/8.jpg",
-      "/hostels/prehs/9.jpg",
-      "/hostels/prehs/10.jpg"
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg",
+      "/hostels/prehs/placeholder.jpg"
     ],
     rating: 4.3,
     reviews: 110,
