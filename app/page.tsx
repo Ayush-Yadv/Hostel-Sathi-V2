@@ -697,7 +697,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={hostel.images[0]}
+                      src={hostel.images[0] || "/placeholder.svg?height=300&width=400"}
                       alt={hostel.name}
                       fill
                       className="object-cover"
@@ -771,7 +771,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={pg.images[0]}
+                      src={pg.images[0] || "/placeholder.svg?height=300&width=400"}
                       alt={pg.name}
                       fill
                       className="object-cover"

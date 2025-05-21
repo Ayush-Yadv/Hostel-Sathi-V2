@@ -286,6 +286,12 @@ export default function HostelDetailsPage() {
     )
   }
 
+  const hostelImages = hostel.images.filter(img => img).map((src, index) => ({
+    id: index + 1,
+    src: src,
+    alt: `${hostel.name} - Image ${index + 1}`,
+  }))
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -346,14 +352,14 @@ export default function HostelDetailsPage() {
 
                 {/* Image Counter */}
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                  {activeImageIndex + 1} / {hostel.images.length}
+                  {activeImageIndex + 1} / {hostel.images.filter(img => img).length}
                 </div>
               </div>
 
               {/* Thumbnail Gallery */}
               <div className="bg-black p-2 overflow-x-auto hide-scrollbar">
                 <div className="flex gap-2">
-                  {hostel.images.map((image, index) => (
+                  {hostel.images.filter(img => img).map((image, index) => (
                     <button
                       key={index}
                       className={`relative min-w-[80px] h-16 rounded overflow-hidden ${
@@ -362,7 +368,7 @@ export default function HostelDetailsPage() {
                       onClick={() => goToImage(index)}
                     >
                       <Image
-                        src={image || "/placeholder.svg"}
+                        src={image}
                         alt={`Thumbnail ${index + 1}`}
                         fill
                         className="object-cover"
