@@ -685,7 +685,11 @@ export default function HostelDetailsPage() {
                             className="object-cover"
                           />
                           <button
-                            onClick={(e) => toggleSaveHostel(recommendedHostel.id, e)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleSaveHostel(recommendedHostel.id, e);
+                            }}
                             className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md z-10"
                           >
                             <Heart
