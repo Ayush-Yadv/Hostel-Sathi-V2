@@ -10,6 +10,7 @@ import { getSavedHostels, removeHostel, saveHostel as saveHostelToFirebase } fro
 import { hostels } from "@/data/hostels"
 import { onAuthChange, getCurrentUser } from "@/lib/auth"
 import CommonNavbar from "@/components/common-navbar"
+import { getFirstAvailableImage, getAvailableImages } from "@/lib/utils"
 
 export default function SavedHostelsPage() {
   const [user, setUser] = useState<any>(null)
@@ -132,7 +133,12 @@ export default function SavedHostelsPage() {
                 className="border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="relative h-48">
-                  <Image src={hostel.images[0] || "/placeholder.svg"} alt={hostel.name} fill className="object-cover" />
+                  <Image 
+                    src={getFirstAvailableImage(hostel.images)} 
+                    alt={hostel.name} 
+                    fill 
+                    className="object-cover" 
+                  />
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between items-start">
@@ -179,7 +185,7 @@ export default function SavedHostelsPage() {
             >
               <div className="relative h-48">
                 <Image
-                  src={hostel.images[0] || "/placeholder.svg?height=300&width=400"}
+                  src={getFirstAvailableImage(hostel.images)}
                   alt={hostel.name}
                   fill
                   className="object-cover"

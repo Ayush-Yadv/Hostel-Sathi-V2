@@ -41,6 +41,7 @@ import MobileNav from "@/components/mobile-nav"
 import WhatsAppButton from "@/components/whatsapp-button"
 import { saveContactForm } from '../lib/contactform';
 import ContactForm from "@/components/ui/contactform"
+import { getFirstAvailableImage } from "@/lib/utils"
 
 export default function HomePage() {
   const router = useRouter()
@@ -697,7 +698,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={hostel.images[0] || "/placeholder.svg?height=300&width=400"}
+                      src={getFirstAvailableImage(hostel.images)}
                       alt={hostel.name}
                       fill
                       className="object-cover"
@@ -771,7 +772,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={pg.images[0] || "/placeholder.svg?height=300&width=400"}
+                      src={getFirstAvailableImage(pg.images)}
                       alt={pg.name}
                       fill
                       className="object-cover"
