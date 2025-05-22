@@ -592,7 +592,7 @@ export default function HomePage() {
 
               {/* Large bold heading */}
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-[#2D3748]">
-                <span className="text-[#5A00F0]">100+</span> Hostels and PG's
+                <span className="text-[#5A00F0]">50+</span> Hostels and PG's
               </h2>
 
               {/* Minimal divider */}
