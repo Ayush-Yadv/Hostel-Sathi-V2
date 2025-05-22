@@ -46,6 +46,7 @@ import { getFirstAvailableImage } from "@/lib/utils"
 export default function HomePage() {
   const router = useRouter()
   const collegeCarouselRef = useRef<HTMLDivElement>(null)
+  const reviewCarouselRef = useRef<HTMLDivElement>(null)
 
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -55,11 +56,7 @@ export default function HomePage() {
 
   // State for carousel
   const [activeSlide, setActiveSlide] = useState(0)
-  const [activeReviewPage, setActiveReviewPage] = useState(0)
   const [isAutoScrolling, setIsAutoScrolling] = useState(true)
-  const reviewTrackRef = useRef<HTMLDivElement>(null)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -77,151 +74,98 @@ export default function HomePage() {
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
+  // Review data type
+  type Review = {
+    name: string
+    initials: string
+    color: string
+    rating: number
+    review: string
+    college: string
   }
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
+  // Review data
+  const reviews: Review[] = [
+    {
+      name: "Ayush Singh",
+      initials: "AS",
+      color: "#FF69B4",
+      rating: 3,
+      review: "Great hostel experience! The facilities are well-maintained, and the staff is very helpful. The location near my college saves a lot of commute time.",
+      college: "B.Tech, GCET"
+    },
+    {
+      name: "Sraddha Kumari",
+      initials: "SK",
+      color: "#5A00F0",
+      rating: 4,
+      review: "The hostel is clean and well-maintained. The staff is friendly and responsive to our needs. I feel safe and comfortable here.",
+      college: "B.Tech, NIET"
+    },
+    {
+      name: "Rahul Kumar",
+      initials: "RK",
+      color: "#FF9E80",
+      rating: 5,
+      review: "Affordable and convenient. The hostel has good amenities and is close to my college. The food is also quite good.",
+      college: "BBA, G L BAJAJ"
+    },
+    {
+      name: "Ananya Patel",
+      initials: "AP",
+      color: "#4E54C8",
+      rating: 3,
+      review: "The location is perfect, but the facilities could be better. The staff is helpful though and they address issues quickly.",
+      college: "BCA, GNIOT"
+    },
+    {
+      name: "Vikram Gupta",
+      initials: "VG",
+      color: "#11998E",
+      rating: 4,
+      review: "Great value for money. The rooms are spacious and the common areas are well-maintained. Highly recommended!",
+      college: "M.Tech, ABES"
+    },
+    {
+      name: "Neha Joshi",
+      initials: "NJ",
+      color: "#8E2DE2",
+      rating: 5,
+      review: "I've been staying here for two years now. The security is excellent and the environment is very conducive for studies.",
+      college: "MBA, KIET"
+    },
+    {
+      name: "Priya Kumar",
+      initials: "PK",
+      color: "#FF6B6B",
+      rating: 5,
+      review: "The hostel provides excellent study environment. The library and study rooms are well-equipped. The staff is very supportive of our academic needs.",
+      college: "B.Tech, IMS"
+    },
+    {
+      name: "Rohan Sharma",
+      initials: "RS",
+      color: "#4CAF50",
+      rating: 4,
+      review: "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained.",
+      college: "B.Tech, JSS"
+    }
+  ]
+
+  // Handle review carousel navigation
+  const scrollReviews = (direction: "prev" | "next") => {
+    if (reviewCarouselRef.current) {
+      const scrollAmount = direction === "next" ? 400 : -400
+      reviewCarouselRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      })
+    }
   }
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
-
-    if (isLeftSwipe) {
-      goToReviewPage((activeReviewPage + 1) % 5)
-    }
-    if (isRightSwipe) {
-      goToReviewPage((activeReviewPage - 1 + 5) % 5)
-    }
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024)
-    }
-
-    // Set initial value
-    handleResize()
-
-    // Add event listener
-    window.addEventListener("resize", handleResize)
-
-    // Check auth state
-    const unsubscribe = onAuthChange(async (user) => {
-      setIsLoggedIn(!!user)
-      setCurrentUser(user)
-      
-      if (user) {
-        // Get saved hostels from Firestore instead of localStorage
-        try {
-          const result = await getSavedHostels(user.uid)
-          if (result.savedHostels) {
-            setSavedHostels(result.savedHostels)
-          }
-        } catch (error) {
-          console.error("Error fetching saved hostels:", error)
-        }
-      } else {
-        setSavedHostels([])
-      }
-    })
-
-    // Improved scroll animation for the path in "What is Hostel Sathi" section
-    const handleScroll = () => {
-      const section = document.getElementById("what-is-hostel-sathi")
-      if (section) {
-        const sectionTop = section.getBoundingClientRect().top
-        const windowHeight = window.innerHeight
-
-        // Trigger animation when section is 25% in view
-        if (sectionTop < windowHeight * 0.75) {
-          const desktopPath = document.getElementById("animated-path-desktop")
-          const mobilePath = document.getElementById("animated-path-mobile")
-
-          if (desktopPath && !desktopPath.classList.contains("animate")) {
-            desktopPath.classList.add("animate")
-          }
-          if (mobilePath && !mobilePath.classList.contains("animate")) {
-            mobilePath.classList.add("animate")
-          }
-        }
-      }
-    }
-
-    // Add scroll event listener
-    window.addEventListener("scroll", handleScroll)
-
-    // Trigger once on load to check if section is already in view
-    setTimeout(handleScroll, 300)
-
-    // Clean up
-    return () => {
-      window.removeEventListener("resize", handleResize)
-      window.removeEventListener("scroll", handleScroll)
-      unsubscribe()
-    }
-  }, [])
-
-  // Auto-advance carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % 5)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  // Auto-scroll reviews
-  useEffect(() => {
-    if (!isAutoScrolling) return
-
-    const interval = setInterval(() => {
-      goToReviewPage((activeReviewPage + 1) % 5)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [activeReviewPage, isAutoScrolling])
 
   // Handle hero carousel navigation
   const goToSlide = (index: number) => {
     setActiveSlide(index)
-  }
-
-  // Handle review carousel navigation
-  const goToReviewPage = (index: number) => {
-    setActiveReviewPage(index)
-    setIsAutoScrolling(false) // Pause auto-scroll when manually navigating
-
-    // Get the review track element
-    const reviewTrack = reviewTrackRef.current
-    if (reviewTrack) {
-      // If going to the last slide, prepare for looping back to first
-      if (index === 4) {
-        // After transition completes, instantly (no animation) go back to first slide
-        setTimeout(() => {
-          reviewTrack.classList.remove("transition-transform")
-          setActiveReviewPage(0)
-
-          // Force reflow to apply the instant change
-          void reviewTrack.offsetWidth
-
-          // Re-enable transitions for next normal navigation
-          setTimeout(() => {
-            reviewTrack.classList.add("transition-transform")
-          }, 50)
-        }, 300) // Wait for transition to complete
-      }
-    }
-
-    // Resume auto-scroll after 10 seconds of inactivity
-    setTimeout(() => {
-      setIsAutoScrolling(true)
-    }, 10000)
   }
 
   // Toggle mobile menu
@@ -310,6 +254,93 @@ export default function HomePage() {
   // Filter hostels and PGs
   const featuredHostels = hostelsList.filter((hostel) => hostel.type === "hostel").slice(0, 3)
   const featuredPGs = hostelsList.filter((hostel) => hostel.type === "pg").slice(0, 3)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024)
+    }
+
+    // Set initial value
+    handleResize()
+
+    // Add event listener
+    window.addEventListener("resize", handleResize)
+
+    // Check auth state
+    const unsubscribe = onAuthChange(async (user) => {
+      setIsLoggedIn(!!user)
+      setCurrentUser(user)
+      
+      if (user) {
+        // Get saved hostels from Firestore instead of localStorage
+        try {
+          const result = await getSavedHostels(user.uid)
+          if (result.savedHostels) {
+            setSavedHostels(result.savedHostels)
+          }
+        } catch (error) {
+          console.error("Error fetching saved hostels:", error)
+        }
+      } else {
+        setSavedHostels([])
+      }
+    })
+
+    // Improved scroll animation for the path in "What is Hostel Sathi" section
+    const handleScroll = () => {
+      const section = document.getElementById("what-is-hostel-sathi")
+      if (section) {
+        const sectionTop = section.getBoundingClientRect().top
+        const windowHeight = window.innerHeight
+
+        // Trigger animation when section is 25% in view
+        if (sectionTop < windowHeight * 0.75) {
+          const desktopPath = document.getElementById("animated-path-desktop")
+          const mobilePath = document.getElementById("animated-path-mobile")
+
+          if (desktopPath && !desktopPath.classList.contains("animate")) {
+            desktopPath.classList.add("animate")
+          }
+          if (mobilePath && !mobilePath.classList.contains("animate")) {
+            mobilePath.classList.add("animate")
+          }
+        }
+      }
+    }
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll)
+
+    // Trigger once on load to check if section is already in view
+    setTimeout(handleScroll, 300)
+
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      window.removeEventListener("scroll", handleScroll)
+      unsubscribe()
+    }
+  }, [])
+
+  // Auto-advance carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % 5)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Auto-scroll reviews
+  useEffect(() => {
+    if (!isAutoScrolling) return
+
+    const interval = setInterval(() => {
+      scrollReviews("next")
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [isAutoScrolling])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -843,292 +874,59 @@ export default function HomePage() {
 
         {/* Student Experience Section - Revamped */}
         <section className="py-10 px-4 bg-gray-50">
-          <div className="max-w-md mx-auto md:max-w-2xl lg:max-w-4xl">
+          <div className="max-w-md mx-auto md:max-w-2xl lg:max-w-5xl xl:max-w-6xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Our Student's experience</h2>
-            </div>
-
-            <div 
-              className="review-carousel overflow-x-auto touch-pan-x snap-x snap-mandatory"
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
-            >
-              <div
-                ref={reviewTrackRef}
-                className="review-track flex gap-4 transition-transform duration-300"
-                style={{ transform: `translateX(-${activeReviewPage * 100}%)` }}
-              >
-                {/* Review Cards */}
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#FF69B4] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        AS
-                      </div>
-                      <div>
-                        <p className="font-bold">Ayush Singh</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "Great hostel experience! The facilities are well-maintained, and the staff is very helpful. The
-                    location near my college saves a lot of commute time."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, GCET</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#5A00F0] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        SK
-                      </div>
-                      <div>
-                        <p className="font-bold">Sraddha Kumari</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "The hostel is clean and well-maintained. The staff is friendly and responsive to our needs. I feel
-                    safe and comfortable here."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, NIET</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#FF9E80] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        RK
-                      </div>
-                      <div>
-                        <p className="font-bold">Rahul Kumar</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "Affordable and convenient. The hostel has good amenities and is close to my college. The food is
-                    also quite good."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">BBA, G L BAJAJ</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#4E54C8] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        AP
-                      </div>
-                      <div>
-                        <p className="font-bold">Ananya Patel</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "The location is perfect, but the facilities could be better. The staff is helpful though and they
-                    address issues quickly."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">BCA, GNIOT</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#11998E] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        VG
-                      </div>
-                      <div>
-                        <p className="font-bold">Vikram Gupta</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "Great value for money. The rooms are spacious and the common areas are well-maintained. Highly
-                    recommended!"
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">M.Tech, ABES</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#8E2DE2] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        NJ
-                      </div>
-                      <div>
-                        <p className="font-bold">Neha Joshi</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "I've been staying here for two years now. The security is excellent and the environment is very
-                    conducive for studies."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">MBA, KIET</p>
-                </div>
-
-                {/* Additional Review Cards */}
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#FF6B6B] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        PK
-                      </div>
-                      <div>
-                        <p className="font-bold">Priya Kumar</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "The hostel provides excellent study environment. The library and study rooms are well-equipped. The staff is very supportive of our academic needs."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, IMS</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#4CAF50] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        RS
-                      </div>
-                      <div>
-                        <p className="font-bold">Rohan Sharma</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, JSS</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#9C27B0] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        AK
-                      </div>
-                      <div>
-                        <p className="font-bold">Aisha Khan</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "The security measures are excellent. I feel very safe here. The hostel has CCTV cameras and security guards 24/7. The location is also very convenient."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, AKGEC</p>
-                </div>
-
-                <div className="min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-16px)] lg:min-w-[calc(25%-12px)] aspect-square bg-white p-4 rounded-lg shadow-md flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[#2196F3] text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
-                        VS
-                      </div>
-                      <div>
-                        <p className="font-bold">Vivek Singh</p>
-                        <div className="flex items-center">
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-[#FFD700] stroke-none" size={14} />
-                          <Star className="fill-gray-300 stroke-none" size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm flex-grow">
-                    "The hostel organizes regular events and activities which help in building a strong community. The sports facilities are also good. Overall a great experience!"
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">B.Tech, DIT</p>
-                </div>
+              <div className="flex gap-2">
+                <button
+                  className="review-prev bg-white rounded-full p-1 shadow-sm"
+                  onClick={() => scrollReviews("prev")}
+                >
+                  <ChevronLeft size={18} className="text-[#5A00F0]" />
+                </button>
+                <button
+                  className="review-next bg-white rounded-full p-1 shadow-sm"
+                  onClick={() => scrollReviews("next")}
+                >
+                  <ChevronRight size={18} className="text-[#5A00F0]" />
+                </button>
               </div>
             </div>
 
-            {/* Carousel indicators - Show 3 dots at a time */}
-            <div className="flex justify-center gap-2 mt-4">
-              {(() => {
-                const totalPages = 5;
-                const dotsToShow = 3;
-                let startPage = Math.max(0, Math.min(activeReviewPage - 1, totalPages - dotsToShow));
-                
-                // Adjust start page to always show 3 dots when possible
-                if (startPage + dotsToShow > totalPages) {
-                  startPage = totalPages - dotsToShow;
-                }
-
-                return Array.from({ length: dotsToShow }, (_, i) => startPage + i).map((index) => (
-                  <button
+            <div className="review-carousel overflow-x-auto hide-scrollbar" ref={reviewCarouselRef}>
+              <div className="flex gap-4 pb-4 w-full">
+                {reviews.map((review, index) => (
+                  <div
                     key={index}
-                    className={`h-2 rounded-full transition-all ${
-                      activeReviewPage === index ? "w-8 bg-[#5A00F0]" : "w-2 bg-gray-300"
-                    }`}
-                    onClick={() => goToReviewPage(index)}
-                  ></button>
-                ));
-              })()}
+                    className="min-w-[300px] md:min-w-[350px] lg:min-w-[400px] bg-white p-6 rounded-lg shadow-md flex flex-col"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="text-white w-12 h-12 rounded-full flex items-center justify-center font-semibold"
+                          style={{ backgroundColor: review.color }}
+                        >
+                          {review.initials}
+                        </div>
+                        <div>
+                          <p className="font-bold text-lg">{review.name}</p>
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`${i < review.rating ? "fill-[#FFD700] stroke-none" : "fill-gray-300 stroke-none"}`}
+                                size={16}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 flex-grow mb-4">{review.review}</p>
+                    <p className="text-sm text-gray-500">{review.college}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
