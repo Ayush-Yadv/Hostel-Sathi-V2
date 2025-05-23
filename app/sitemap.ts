@@ -24,32 +24,69 @@ const locations = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://hostelsathi.com'
+  const currentDate = new Date()
 
   // Base pages
   const routes = [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${baseUrl}/about-us`,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/contact-us`,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/hostels`,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blogs`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/team`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/profile`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/saved-hostels`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/list-property`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
   ] as MetadataRoute.Sitemap
 
@@ -57,7 +94,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   locations.forEach((location) => {
     routes.push({
       url: `${baseUrl}/hostels/near/${location.toLowerCase().replace(/\s+/g, '-')}`,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
     })
@@ -68,7 +105,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   types.forEach((type) => {
     routes.push({
       url: `${baseUrl}/hostels/${type}`,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,
     })
@@ -79,7 +116,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     locations.forEach((location) => {
       routes.push({
         url: `${baseUrl}/hostels/${type}/near/${location.toLowerCase().replace(/\s+/g, '-')}`,
-        lastModified: new Date(),
+        lastModified: currentDate,
         changeFrequency: 'weekly',
         priority: 0.8,
       })
