@@ -1,127 +1,101 @@
 import { MetadataRoute } from 'next'
+import { db } from '@/lib/firebase'
+import { collection, getDocs } from 'firebase/firestore'
 
-const locations = [
-  'Knowledge Park',
-  'Galgotia College',
-  'GL Bajaj',
-  'GNIOT',
-  'NIET College',
-  'IIMT College',
-  'Knowledge Park 1',
-  'Knowledge Park 2',
-  'Knowledge Park 3',
-  'Alpha 1',
-  'Alpha 2',
-  'Beta 1',
-  'Beta 2',
-  'Gamma 1',
-  'Gamma 2',
-  'Delta 1',
-  'Pari Chowk',
-  'Jagat Farm',
-  'Surajpur'
-]
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Base URLs
   const baseUrl = 'https://hostelsathi.com'
-  const currentDate = new Date()
-
-  // Base pages
-  const routes = [
+  const baseRoutes = [
     {
       url: baseUrl,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${baseUrl}/about-us`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/contact-us`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/hostels`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/blogs`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/team`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
     {
       url: `${baseUrl}/profile`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/saved-hostels`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/list-property`,
-      lastModified: currentDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
-  ] as MetadataRoute.Sitemap
+  ]
 
-  // Add location-specific pages
+  // Get all unique locations from the database
+  const hostelsRef = collection(db, 'hostels')
+  const snapshot = await getDocs(hostelsRef)
+  const locations = new Set<string>()
+  
+  snapshot.forEach((doc) => {
+    const data = doc.data()
+    if (data.locationNormalized) {
+      locations.add(data.locationNormalized)
+    }
+  })
+
+  // Generate dynamic routes for each location
+  const dynamicRoutes: MetadataRoute.Sitemap = []
+  const types = ['hostel', 'pg', 'boys', 'girls']
+
   locations.forEach((location) => {
-    routes.push({
-      url: `${baseUrl}/hostels/near/${location.toLowerCase().replace(/\s+/g, '-')}`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    })
-  })
-
-  // Add type-specific pages
-  const types = ['boys', 'girls', 'pg', 'hostel']
-  types.forEach((type) => {
-    routes.push({
-      url: `${baseUrl}/hostels/${type}`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    })
-  })
-
-  // Add combination pages (type + location)
-  types.forEach((type) => {
-    locations.forEach((location) => {
-      routes.push({
-        url: `${baseUrl}/hostels/${type}/near/${location.toLowerCase().replace(/\s+/g, '-')}`,
-        lastModified: currentDate,
-        changeFrequency: 'weekly',
+    const formattedLocation = location.split(' ').join('-')
+    
+    types.forEach((type) => {
+      dynamicRoutes.push({
+        url: `${baseUrl}/hostels/${type}/near/${formattedLocation}`,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
         priority: 0.8,
       })
     })
   })
 
-  return routes
+  return [...baseRoutes, ...dynamicRoutes]
 } 
