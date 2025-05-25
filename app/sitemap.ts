@@ -5,64 +5,65 @@ import { collection, getDocs } from 'firebase/firestore'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Base URLs
   const baseUrl = 'https://hostelsathi.com'
+  const now = new Date().toISOString()
   const baseRoutes = [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${baseUrl}/about-us`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/contact-us`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/hostels`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/blogs`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/team`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.5,
     },
     {
       url: `${baseUrl}/profile`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/saved-hostels`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/list-property`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
@@ -90,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     types.forEach((type) => {
       dynamicRoutes.push({
         url: `${baseUrl}/hostels/${type}/near/${formattedLocation}`,
-        lastModified: new Date(),
+        lastModified: now,
         changeFrequency: 'daily',
         priority: 0.8,
       })
@@ -98,4 +99,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
 
   return [...baseRoutes, ...dynamicRoutes]
-} 
+}
