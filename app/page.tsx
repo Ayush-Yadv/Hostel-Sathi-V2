@@ -1,5 +1,6 @@
 "use client"
-
+import Head from 'next/head';
+import JsonLd, { getBreadcrumbSchema } from '../components/json-ld';
 import type React from "react"
 import { User } from "firebase/auth"
 import { useState, useEffect, useRef } from "react"
