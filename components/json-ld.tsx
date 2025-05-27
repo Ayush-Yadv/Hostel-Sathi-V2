@@ -4,7 +4,7 @@ export default function JsonLd({ data }: { data: any }) {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
-  )
+  );
 }
 
 export const getOrganizationSchema = () => ({
@@ -56,7 +56,7 @@ export const getOrganizationSchema = () => ({
       }
     ]
   }
-})
+});
 
 export const getHostelSchema = (hostel: any) => ({
   "@context": "https://schema.org",
@@ -91,7 +91,7 @@ export const getHostelSchema = (hostel: any) => ({
     "@type": "City",
     name: "Greater Noida"
   }
-})
+});
 
 export const getLocationSchema = (location: string) => ({
   "@context": "https://schema.org",
@@ -115,4 +115,42 @@ export const getLocationSchema = (location: string) => ({
       description: `Find verified hostels and PGs near ${location} in Greater Noida. Student accommodation with modern amenities.`
     }
   ]
-}) 
+});
+
+// New function to generate BreadcrumbList schema
+export const getBreadcrumbSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://hostelsathi.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Team",
+      "item": "https://hostelsathi.com/team"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Blog",
+      "item": "https://hostelsathi.com/blogs"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Privacy Policy",
+      "item": "https://hostelsathi.com/privacy"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Hostels/PG",
+      "item": "https://hostelsathi.com/hostels"
+    }
+  ]
+});
