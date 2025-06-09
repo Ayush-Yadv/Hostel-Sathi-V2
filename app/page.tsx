@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 import { User } from "firebase/auth"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
