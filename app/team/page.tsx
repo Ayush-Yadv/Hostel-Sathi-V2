@@ -39,7 +39,7 @@ export default function TeamPage() {
       name: "Ayush Yadav",
       role: "Full Stack Developer & Co-founder",
       bio: "Ayush is a passionate full stack developer with expertise in React, Node.js, and database technologies. He co-founded Hostel Sathi to solve accommodation problems for students.",
-      image: "/Ayush1.jpg?height=400&width=400",
+      image: "/Ayuh1.jpg?height=400&width=400",
     },
     {
       name: "Rohit Kumar",
