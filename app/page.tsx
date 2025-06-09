@@ -1,6 +1,5 @@
 "use client"
-
-import type React from "react"
+import React from "react"
 import { User } from "firebase/auth"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
@@ -31,6 +30,13 @@ import {
   LogOut,
   ChevronUp,
   ChevronDown,
+  Shield,
+  DollarSign,
+  Users,
+  ArrowRight,
+  CheckCircle,
+  FileCheck,
+  CalendarCheck,
 } from "lucide-react"
 import { collegesList } from "@/data/colleges"
 import { hostelsList } from "@/data/hostels"
@@ -42,6 +48,10 @@ import WhatsAppButton from "@/components/whatsapp-button"
 import { saveContactForm } from '../lib/contactform';
 import ContactForm from "@/components/ui/contactform"
 import { getFirstAvailableImage } from "@/lib/utils"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function HomePage() {
   const router = useRouter()
@@ -50,6 +60,10 @@ export default function HomePage() {
 
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // State for feature bar
+
+  const [currentFeature, setCurrentFeature] = useState(0)
 
   // State for search
   const [selectedCollege, setSelectedCollege] = useState("")
@@ -60,7 +74,7 @@ export default function HomePage() {
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
- const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   // State for saved hostels
   const [savedHostels, setSavedHostels] = useState<number[]>([])
@@ -150,6 +164,28 @@ export default function HomePage() {
       review: "Great food quality and variety. The mess menu changes regularly and they accommodate special dietary requirements. The common areas are well-maintained.",
       college: "B.Tech, JSS"
     }
+  ]
+
+  // features
+  const features = [
+    {
+      icon: Shield,
+      title: "Verified Listings",
+      description: "All properties are personally verified by our team for authenticity and quality.",
+      bgColor: "bg-yellow-400",
+    },
+    {
+      icon: DollarSign,
+      title: "Zero Brokerage",
+      description: "Connect directly with property owners. No hidden charges, no commission fees.",
+      bgColor: "bg-green-400",
+    },
+    {
+      icon: Users,
+      title: "Student Friendly",
+      description: "Specially curated accommodations with student-friendly amenities and policies.",
+      bgColor: "bg-blue-400",
+    },
   ]
 
   // Handle review carousel navigation
@@ -270,7 +306,7 @@ export default function HomePage() {
     const unsubscribe = onAuthChange(async (user) => {
       setIsLoggedIn(!!user)
       setCurrentUser(user)
-      
+
       if (user) {
         // Get saved hostels from Firestore instead of localStorage
         try {
@@ -341,6 +377,16 @@ export default function HomePage() {
 
     return () => clearInterval(interval)
   }, [isAutoScrolling])
+
+  // scrool of listing 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeature((prev) => (prev + 1) % features.length)
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -456,215 +502,341 @@ export default function HomePage() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1">
-        {/* Search Section */}
-        <section className="p-6 bg-gradient-to-b from-[#5A00F0] via-[#9747FF] to-[#f5eeff]">
-          <div className="flex flex-col gap-4 w-full max-w-md mx-auto md:max-w-2xl lg:max-w-4xl">
-            <h2 className="text-white text-xl font-bold text-center mb-2">Find Your Perfect Hostel</h2>
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <div className="relative flex-1 w-full">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                  <GraduationCap size={20} className="text-[#5A00F0]" />
-                </div>
-                <select
-                  value={selectedCollege}
-                  onChange={(e) => setSelectedCollege(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 shadow-md appearance-none bg-white"
-                >
-                  <option value="">Select your college</option>
-                  {collegesList.map((college) => (
-                    <option key={college.id} value={college.name}>
-                      {college.name}
-                    </option>
-                  ))}
-                  <option value="Other">Other</option>
-                </select>
+
+      <section className="relative overflow-hidden">
+        {/* Background with gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-purple-700/20 to-transparent"></div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+
+        <div className="relative container mx-auto px-4 py-12 sm:py-16 lg:py-24">
+          <div className="max-w-6xl mx-auto">
+            {/* Top Section - Heading and Search */}
+            <div className="text-center mb-12 lg:mb-16">
+              <div className="space-y-6 mb-10">
+                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 font-medium">
+                  <Star className="w-3 h-3 mr-1" />
+                  Trusted by 10,000+ Students
+                </Badge>
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight font-modern text-white">
+                  Find Your Perfect
+                  <span className="block text-yellow-300">Hostel Companion</span>
+                </h1>
+                <p className="text-lg sm:text-xl text-purple-100 leading-relaxed font-modern font-medium max-w-3xl mx-auto">
+                  Discover verified hostels and PGs near your college with zero brokerage. Your comfort, our priority.
+                </p>
               </div>
-              <button
-                onClick={handleSearch}
-                disabled={!selectedCollege}
-                className={`px-6 py-3 rounded-lg shadow-md flex items-center gap-2 w-full md:w-auto justify-center ${
-                  selectedCollege
-                    ? "bg-[#8300FF] text-white hover:bg-[#7000DD]"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } transition`}
-              >
-                <Search size={20} />
-                <span>Search</span>
-              </button>
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-2">
-              <MapPin size={16} className="text-white" />
-              <span className="text-white text-sm">Greater Noida, Uttar Pradesh</span>
-            </div>
-          </div>
-        </section>
 
-        {/* Hero Banner - Carousel */}
-        <section className="py-8 w-full bg-gradient-to-r from-[#5A00F0]/10 to-[#B366FF]/10 box-border">
-          <div className="w-full">
-            <div className="bg-white shadow-lg overflow-hidden">
-              <div className="carousel-container relative">
-                <div
-                  className="carousel-track flex transition-transform duration-500"
-                  style={{ transform: `translateX(-${activeSlide * 100}%)` }}
-                >
-                  {/* Carousel slides */}
-                  <div className="carousel-slide min-w-full p-10 md:p-16 lg:p-20 bg-gradient-to-r from-[#5A00F0] to-[#B366FF]">
-                    <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          Crazy discount
-                          <br />
-                          on Hostels
-                        </h2>
-                      </div>
-                      <div className="flex-1 flex justify-center">
-                        <Hotel size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
+
+              {/* search fxn new one  */}
+
+
+              <div className="w-full max-w-2xl mx-auto p-4">
+                {/* 🎯 MAIN CONTAINER - This div controls the overall size and background */}
+                <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 lg:p-6 shadow-lg border border-gray-100">
+                  {/* Header - Reduced margin bottom from mb-8 to mb-4 */}
+                  <div className="text-center mb-4">
+                    <h3 className="text-gray-800 font-bold text-xl lg:text-2xl mb-1">Search Your College</h3>
+                  </div>
+
+                  {/* Search Form - Reduced space-y from 6 to 4 */}
+                  <div className="space-y-4">
+                    {/* College Selection */}
+                    <div className="w-full">
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
+                          <GraduationCap size={18} className="text-purple-600" />
+                        </div>
+                        <select
+                          id="college-select"
+                          value={selectedCollege}
+                          onChange={(e) => setSelectedCollege(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 shadow-sm appearance-none bg-white text-gray-800 font-medium focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none transition-all duration-200 hover:border-gray-300"
+                        >
+                          <option value="" disabled>
+                            Choose your college...
+                          </option>
+                          {collegesList.map((college) => (
+                            <option key={college.id} value={college.name}>
+                              {college.name}
+                            </option>
+                          ))}
+                        </select>
+                        {/* Custom dropdown arrow */}
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#FF6B6B] to-[#FF9E80]">
-                    <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          Premium
-                          <br />
-                          Amenities
-                        </h2>
-                      </div>
-                      <div className="flex-1 flex justify-center">
-                        <Wifi size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
-                      </div>
+
+                    {/* Search Button */}
+                    <div className="flex justify-center">
+                      <Button
+                        onClick={handleSearch}
+                        disabled={!selectedCollege}
+                        size="default"
+                        className={`w-full sm:w-auto min-w-[200px] h-12 font-semibold rounded-lg text-base transition-all duration-200 ${selectedCollege
+                            ? "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                      >
+                        <Search className="w-4 h-4 mr-2" />
+                        Find Hostels
+                      </Button>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#4E54C8] to-[#8F94FB]">
-                    <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          Comfortable
-                          <br />
-                          Rooms
-                        </h2>
+
+                  {/* Popular Locations Footer - Reduced margin top from mt-8 to mt-4 and padding top from pt-6 to pt-4 */}
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1 text-purple-600" />
+                        <span className="font-medium">Currently operating in:</span>
                       </div>
-                      <div className="flex-1 flex justify-center">
-                        <Bed size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
-                      </div>
+                      <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
+                        Greater Noida
+                      </span>
                     </div>
                   </div>
-                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#11998E] to-[#38EF7D]">
-                    <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          Cafeteria
-                          <br />
-                          Services
-                        </h2>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Section - Feature Carousel */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              {/* Left - Feature Carousel */}
+              <div className="relative">
+                <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-10 border border-white/20 h-[300px] flex items-center">
+                  <div className="w-full">
+                    <div className="flex items-start space-x-6">
+                      <div className={`${features[currentFeature].bgColor} p-4 rounded-2xl flex-shrink-0`}>
+                        {React.createElement(features[currentFeature].icon, {
+                          className: "w-8 h-8 text-purple-800",
+                        })}
                       </div>
-                      <div className="flex-1 flex justify-center">
-                        <Coffee size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="carousel-slide min-w-full p-6 md:p-16 lg:p-20 bg-gradient-to-r from-[#8E2DE2] to-[#4A00E0]">
-                    <div className="flex flex-col md:flex-row items-center">
-                      <div className="flex-1 mb-4 md:mb-0 md:pr-5">
-                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          Special
-                          <br />
-                          Offers
-                        </h2>
-                      </div>
-                      <div className="flex-1 flex justify-center">
-                        <Discount size={80} className="text-white/80 md:w-24 md:h-24 lg:w-28 lg:h-28" />
+                      <div className="text-white flex-1">
+                        <h3 className="font-bold text-2xl lg:text-3xl mb-4 font-modern">
+                          {features[currentFeature].title}
+                        </h3>
+                        <p className="text-purple-100 font-modern font-medium text-lg leading-relaxed">
+                          {features[currentFeature].description}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Carousel controls */}
-                <button
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-md z-10"
-                  onClick={() => goToSlide((activeSlide - 1 + 5) % 5)}
-                >
-                  <ChevronLeft className="text-[#5A00F0]" />
-                </button>
-                <button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-md z-10"
-                  onClick={() => goToSlide((activeSlide + 1) % 5)}
-                >
-                  <ChevronRight className="text-[#5A00F0]" />
-                </button>
-
-                {/* Carousel indicators */}
-                <div className="flex justify-center gap-2 mt-4 pb-4">
-                  {[0, 1, 2, 3, 4].map((index) => (
+                {/* Carousel Indicators */}
+                <div className="flex justify-center mt-6 space-x-3">
+                  {features.map((_, index) => (
                     <button
                       key={index}
-                      className={`h-2 rounded-full transition-all ${
-                        activeSlide === index ? "w-8 bg-[#5A00F0]" : "w-2 bg-gray-300"
-                      }`}
-                      onClick={() => goToSlide(index)}
-                    ></button>
+                      onClick={() => setCurrentFeature(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentFeature ? "bg-white scale-125" : "bg-white/50 hover:bg-white/70"
+                        }`}
+                    />
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* What is Hostel Sathi Section - Enhanced Design with Dynamic Animation */}
-        {/* What is Hostel Sathi Section - Minimalist Redesign */}
-        <section id="what-is-hostel-sathi" className="py-16 px-4 md:py-24 bg-white overflow-hidden">
-          <div className="max-w-md mx-auto md:max-w-2xl lg:max-w-3xl">
-            <div className="flex flex-col items-center text-center mb-12">
-              {/* Small heading */}
-              <h3 className="text-[#718096] text-lg md:text-xl mb-2 font-light">what is Hostel Sathi?</h3>
-
-              {/* Large bold heading */}
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-[#2D3748]">
-                <span className="text-[#5A00F0]">50+</span> Hostels and PG's
-              </h2>
-
-              {/* Minimal divider */}
-              <div className="w-16 h-1 bg-[#5A00F0] mb-10"></div>
-
-              {/* Staggered text with increased spacing */}
-              <p className="text-[#718096] text-lg md:text-xl leading-relaxed mb-8 max-w-xl">
-                Hostel Sathi is a place
-                <br className="hidden md:block" />
-                where you can find
-                <br className="hidden md:block" />
-                affordable hostels and PGs near your college.
-              </p>
-
-              {/* Feature points in minimal style */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 w-full">
-                <div className="flex flex-col items-center">
-                  <Building2 size={28} className="text-[#5A00F0] mb-3" />
-                  <p className="text-[#2D3748] font-medium">Verified Listings</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <MapPin size={28} className="text-[#5A00F0] mb-3" />
-                  <p className="text-[#2D3748] font-medium">Zero Brokerage</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <Bed size={28} className="text-[#5A00F0] mb-3" />
-                  <p className="text-[#2D3748] font-medium">Student Friendly</p>
+              {/* Right - Stats and Additional Info */}
+              <div className="space-y-12 w-full">
+                {/* Additional Benefits */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 lg:p-10 border border-white/20 h-[300px] flex flex-col justify-center">
+                  <h4 className="text-white font-semibold text-lg mb-4">Why Choose Hostel Sathi?</h4>
+                  <ul className="space-y-3 text-purple-100">
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <span>Instant property verification</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <span>Direct owner contact</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <span>Student-focused amenities</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <span>24/7 customer support</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <Link
-                href="/hostels"
-                className="bg-[#5A00F0] text-white px-8 py-3 rounded-md font-medium hover:bg-[#4800C0] transition-colors"
-              >
-                Explore Now
-              </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
+      {/* ANOTHER SECTION CONTAIN THE FEATURE PART */}
+
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Decorative elements */}
+          <div className="absolute left-0 w-32 h-32 bg-purple-100 rounded-full opacity-30 blur-3xl"></div>
+          <div className="absolute right-0 w-32 h-32 bg-purple-100 rounded-full opacity-30 blur-3xl"></div>
+
+          <div className="relative max-w-5xl mx-auto">
+            {/* Header */}
+            <div className="mb-16 sm:mb-20 text-center">
+              <div className="inline-block px-4 py-1.5 bg-purple-100 rounded-full text-purple-700 font-medium text-sm sm:text-base mb-6">
+                <span className="flex items-center">
+                  <Star className="w-4 h-4 mr-2" />
+                  <span>Trusted by thousands of students</span>
+                </span>
+              </div>
+
+              <p className="text-gray-500 text-sm sm:text-base mb-4 font-medium tracking-wide uppercase">
+                what is Hostel Sathi?
+              </p>
+
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
+                <span className="text-purple-600 font-modern">50+</span>{" "}
+                <span className="text-gray-900 font-modern">Hostels and PG's</span>
+              </h2>
+
+              {/* Purple underline decoration - made it more elegant */}
+              <div className="w-24 h-1.5 bg-gradient-to-r from-purple-500 to-purple-700 mx-auto mb-8 rounded-full"></div>
+
+              <p className="text-gray-600 text-lg sm:text-xl lg:text-2xl leading-relaxed max-w-3xl mx-auto font-modern">
+                Hostel Sathi is a place where you can find affordable hostels and PGs near your college.
+                <span className="block mt-4 text-base sm:text-lg text-gray-500">
+                  We connect students with quality accommodations that feel like a home away from home.
+                </span>
+              </p>
+            </div>
+
+            {/* Features Cards - Redesigned with hover effects */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+      {/* Smart Roommate Matching */}
+      {/* Complete Online Booking */}
+<div
+  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:border-purple-200 group animate-fade-in-up"
+  style={{ animationDelay: "0.1s" }}
+>
+  <div className="flex flex-col h-full">
+    <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-200 transition-colors duration-300 group-hover:scale-110 group-hover:rotate-3 transform">
+      <CalendarCheck className="w-7 h-7 text-purple-600 transition-transform duration-300" />
+    </div>
+    <h3 className="text-xl font-bold text-gray-900 mb-3 font-modern">Complete Online Booking</h3>
+    <p className="text-gray-600 text-base leading-relaxed mb-5 flex-grow">
+      Book your hostel from anywhere with our seamless online process. Browse verified listings, take virtual tours,
+      and confirm your stay—all within a few clicks.
+    </p>
+    <ul className="space-y-2">
+      <li className="flex items-center text-sm text-gray-500">
+        <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+        <span>Instant booking & confirmation</span>
+      </li>
+      <li className="flex items-center text-sm text-gray-500">
+        <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+        <span>Virtual hostel tours available</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+      {/* 24/7 Safety & Support */}
+      <div
+        className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:border-purple-200 group animate-fade-in-up"
+        style={{ animationDelay: "0.2s" }}
+      >
+        <div className="flex flex-col h-full">
+          <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-200 transition-colors duration-300 group-hover:scale-110 group-hover:rotate-3 transform">
+            <Shield className="w-7 h-7 text-purple-600 transition-transform duration-300" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-3 font-modern">24/7 Safety & Support</h3>
+          <p className="text-gray-600 text-base leading-relaxed mb-5 flex-grow">
+            Round-the-clock security monitoring and instant support team available to ensure your safety and resolve any
+            concerns immediately.
+          </p>
+          <ul className="space-y-2">
+            <li className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+              <span>24/7 security monitoring</span>
+            </li>
+            <li className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+              <span>Instant support response</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Student Friendly */}
+      <div
+        className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:border-purple-200 group sm:col-span-2 lg:col-span-1 animate-fade-in-up"
+        style={{ animationDelay: "0.3s" }}
+      >
+        <div className="flex flex-col h-full">
+          <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-200 transition-colors duration-300 group-hover:scale-110 group-hover:rotate-3 transform">
+            <Bed className="w-7 h-7 text-purple-600 transition-transform duration-300" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-3 font-modern">Student Friendly</h3>
+          <p className="text-gray-600 text-base leading-relaxed mb-5 flex-grow">
+            Specially curated accommodations with student-focused amenities, flexible policies, and convenient locations
+            near educational institutions.
+          </p>
+          <ul className="space-y-2">
+            <li className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+              <span>Study-friendly environment</span>
+            </li>
+            <li className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 mr-2 text-purple-600" />
+              <span>Student community</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+          opacity: 0;
+        }
+      `}</style>
+    </div>
+            {/* CTA Button - Enhanced */}
+            <div className=" flex justify-center mb-16">
+              <Button
+                asChild
+                size="lg"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-10 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group h-auto"
+              >
+                <Link href="/hostels">
+                  Explore Now
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
+              </Button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+{/* CONTAIN THE HOSTEL AND THE COLLEGES :  */}
+
+      <main className="flex-1 -mt-20">
         {/* Popular Colleges - Improved responsiveness */}
         <section className="py-8 px-4 bg-gray-50">
           <div className="max-w-md mx-auto md:max-w-2xl lg:max-w-5xl xl:max-w-6xl">
@@ -825,9 +997,8 @@ export default function HomePage() {
                     </button>
                     {/* Gender Badge */}
                     <span
-                      className={`absolute top-3 left-3 text-white text-xs px-2 py-1 rounded-full uppercase ${
-                        pg.gender === "boys" ? "bg-blue-500" : pg.gender === "girls" ? "bg-pink-500" : "bg-purple-500"
-                      }`}
+                      className={`absolute top-3 left-3 text-white text-xs px-2 py-1 rounded-full uppercase ${pg.gender === "boys" ? "bg-blue-500" : pg.gender === "girls" ? "bg-pink-500" : "bg-purple-500"
+                        }`}
                     >
                       {pg.gender}
                     </span>
