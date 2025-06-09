@@ -44,7 +44,7 @@ Once you've found the right hostel, book it immediately to secure your spot.
 Remember, a good hostel can significantly impact your college experience, so take your time to make the right choice.`,
     author: "Ayush Yadav",
     date: "March 15, 2024",
-    image: "/blog-images/hostel-steps.jpg",
+    image: "/image.jpg",
     readTime: "5 min read",
     keywords: ["how to get hostel", "hostel admission guide", "hostel booking steps"]
   },
