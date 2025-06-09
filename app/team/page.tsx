@@ -39,13 +39,13 @@ export default function TeamPage() {
       name: "Ayush Yadav",
       role: "Full Stack Developer & Co-founder",
       bio: "Ayush is a passionate full stack developer with expertise in React, Node.js, and database technologies. He co-founded Hostel Sathi to solve accommodation problems for students.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/ayush .jpg?height=400&width=400",
     },
     {
       name: "Rohit Kumar",
       role: "Full Stack Developer & Co-founder",
       bio: "Rohit brings extensive experience in full stack development with a focus on UI/UX and performance optimization. He's committed to creating a seamless experience for Hostel Sathi users.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/rohit.jpg?height=400&width=400",
     },
   ]
 
@@ -54,19 +54,19 @@ export default function TeamPage() {
       name: "Bineet Singh Rathor",
       role: "Founder",
       bio: "Bineet founded Hostel Sathi with a vision to revolutionize how students find accommodation. He oversees the strategic direction and growth of the platform.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/bineet.jpg?height=400&width=400",
     },
     {
       name: "Muskan Singh",
       role: "Marketing Director",
       bio: "Muskan leads all marketing initiatives at Hostel Sathi, from digital campaigns to partnerships with colleges and universities across the region.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/muskan.jpg?height=400&width=400",
     },
     {
       name: "Harshit Singh",
       role: "Co-founder & Operations Lead",
       bio: "Harshit manages the day-to-day operations of Hostel Sathi, ensuring that both students and property owners have a seamless experience on our platform.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/harshit.jpg?height=400&width=400",
     },
   ]
 
