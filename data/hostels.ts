@@ -22,7 +22,7 @@ export const hostelsList: Hostel[] = [
   {
     id: 1,
     name: "RGHs",
-    price: 8000,
+    price: 11000,
     distance: {
       GCET: 0.5,
       NIET: 1.2,
