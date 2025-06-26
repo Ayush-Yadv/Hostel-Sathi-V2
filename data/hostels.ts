@@ -621,3 +621,15 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 export const hostels = hostelsList
+
+
+
+
+
+
+
+
+
+
+
+
