@@ -18,6 +18,7 @@ import { db } from "@/lib/firebase"
 import { User } from "firebase/auth"
 import { reviewsList, type Review } from "@/data/reviews"
 import { getAvailableImages, getFirstAvailableImage } from "@/lib/utils"
+import HostelRoomOptions from "@/components/price/hostel-price"
 
 import {
   Menu,
@@ -187,6 +188,9 @@ export default function HostelDetailsPage() {
         return <Wifi size={18} />
       case "Mess":
       case "Homely Food":
+      case "4 time meals":
+      case "3 time meals":
+      case "Lunch at college":
         return <Utensils size={18} />
       case "Security":
         return <Shield size={18} />
@@ -194,6 +198,7 @@ export default function HostelDetailsPage() {
         return <Power size={18} />
       case "TV Lounge":
       case "Tech Lounge":
+      case "Indoor games":
         return <Tv size={18} />
       case "Gym":
         return <Dumbbell size={18} />
@@ -201,6 +206,15 @@ export default function HostelDetailsPage() {
       case "Study Room":
       case "Study Rooms":
         return <Library size={18} />
+      case "Laundry":
+        return <Home size={18} />
+      case "Transport":
+      case "Pick drop service":
+        return <MapPin size={18} />
+      case "Cooler":
+      case "AC":
+      case "Non AC":
+        return <Power size={18} />
       default:
         return null
     }
@@ -435,34 +449,118 @@ export default function HostelDetailsPage() {
                     </div>
                   </div>
 
+                  {/* Room Pricing Section */}
+                  <div className="border-t border-gray-200 pt-4 mb-4">
+                    <HostelRoomOptions 
+                      acPrices={{
+                        seater1: hostel.price + 5000,
+                        seater2: hostel.price + 2000,
+                        seater3: hostel.price,
+                      }}
+                      nonAcPrices={{
+                        seater1: hostel.price - 1000,
+                        seater2: hostel.price - 3000,
+                        seater3: hostel.price - 5000,
+                      }}
+                    />
+                  </div>
+
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     <h2 className="text-xl font-bold mb-3">Distance</h2>
                     <div className="flex items-center">
                       <MapPin size={18} className="text-[#5A00F0] mr-2" />
                       <span>
-                        {hostel.distance[collegeParam ?? "Other"] || hostel.distance["Other"]} km from {collegeParam || "city center"}
+                        {collegeParam === "Other colleges in Greater Noida" 
+                          ? `${hostel.distance["Other"]} km from Greater Noida`
+                          : `${hostel.distance[collegeParam ?? "Other"] || hostel.distance["Other"]} km from ${collegeParam || "city center"}`}
                       </span>
-                      {/* <span>
-                        {hostel.distance[collegeParam] || hostel.distance["Other"]} km from {collegeParam || "city center"}
-                      </span> */}
                     </div>
                   </div>
 
                   <div className="border-t border-gray-200 pt-4 mb-4">
-                    <h2 className="text-xl font-bold mb-3">Description</h2>
-                    <p className="text-gray-700">{hostel.description}</p>
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-4">
                     <h2 className="text-xl font-bold mb-3">Amenities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {hostel.amenities.map((amenity, index) => (
-                        <div key={index} className="flex items-center">
-                          <div className="text-[#5A00F0] mr-2">{getAmenityIcon(amenity)}</div>
-                          <span>{amenity}</span>
-                        </div>
-                      ))}
+                      {hostel.type === "hostel" ? (
+                        // Hostel amenities
+                        <>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Wifi size={18} /></div>
+                            <span>WiFi</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Dumbbell size={18} /></div>
+                            <span>Gym</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Home size={18} /></div>
+                            <span>Laundry</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><MapPin size={18} /></div>
+                            <span>Transport (Pick/Drop)</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Utensils size={18} /></div>
+                            <span>Mess (4 time meals)</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Utensils size={18} /></div>
+                            <span>Lunch at college</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Tv size={18} /></div>
+                            <span>Indoor games</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Library size={18} /></div>
+                            <span>Study room</span>
+                          </div>
+                        </>
+                      ) : (
+                        // PG amenities
+                        <>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Utensils size={18} /></div>
+                            <span>3 time meals</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Power size={18} /></div>
+                            <span>Cooler in non AC</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Wifi size={18} /></div>
+                            <span>WiFi</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="text-[#5A00F0] mr-2"><Home size={18} /></div>
+                            <span>Laundry</span>
+                          </div>
+                        </>
+                      )}
+                      
+                      {/* Show original amenities as well */}
+                      {hostel.amenities.map((amenity, index) => {
+                        // Skip amenities we've already added manually
+                        const skipAmenities = hostel.type === "hostel" 
+                          ? ["WiFi", "Gym", "Laundry", "Transport", "Mess", "Indoor games", "Study Room", "Study Rooms"] 
+                          : ["WiFi", "Laundry", "Cooler", "Mess"];
+                        
+                        if (!skipAmenities.some(item => amenity.includes(item))) {
+                          return (
+                            <div key={index} className="flex items-center">
+                              <div className="text-[#5A00F0] mr-2">{getAmenityIcon(amenity)}</div>
+                              <span>{amenity}</span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
                     </div>
+                  </div>
+                  
+                  <div className="border-t border-gray-200 pt-4">
+                    <h2 className="text-xl font-bold mb-3">Description</h2>
+                    <p className="text-gray-700">{hostel.description}</p>
                   </div>
                 </div>
 

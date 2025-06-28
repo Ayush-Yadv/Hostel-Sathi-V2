@@ -55,4 +55,11 @@ export const collegesList = [
     location: "Greater Noida",
     image: "/colleges/sharda.jpg"
   },
+  {
+    id: 9,
+    name: "Other colleges in Greater Noida",
+    type: "Various",
+    location: "Greater Noida",
+    image: "/colleges/other.jpg"
+  }
 ]

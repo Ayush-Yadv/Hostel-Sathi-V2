@@ -1,79 +1,96 @@
-import React from 'react';
+// components/HostelRoomOptions.tsx
+"use client";
 
-interface PriceTemplateProps {
-  hostelName?: string;
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { BadgeCheck, Home } from "lucide-react";
+
+interface RoomPrices {
+  seater1: number;
+  seater2: number;
+  seater3: number;
 }
 
-const PriceTemplate: React.FC<PriceTemplateProps> = ({ 
-  hostelName = "Paradise Hostel" 
-}) => {
-  const priceData = [
-    { roomType: "3 Seater", acPrice: "₹8,500", nonAcPrice: "₹6,200" },
-    { roomType: "2 Seater", acPrice: "₹12,000", nonAcPrice: "₹9,500" },
-    { roomType: "1 Seater", acPrice: "₹18,000", nonAcPrice: "₹14,500" }
-  ];
+interface HostelRoomOptionsProps {
+  acPrices?: RoomPrices;
+  nonAcPrices?: RoomPrices;
+}
+
+const HostelRoomOptions: React.FC<HostelRoomOptionsProps> = ({ acPrices, nonAcPrices }) => {
+  const defaultPrices: RoomPrices = {
+    seater1: 0,
+    seater2: 0,
+    seater3: 0
+  };
+
+  const ac = acPrices || defaultPrices;
+  const nonac = nonAcPrices || defaultPrices;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <div className="overflow-hidden rounded-lg border border-purple-200">
-        <table className="w-full">
-          {/* Header Row with Hostel Name */}
-          <thead>
-            <tr>
-              <th 
-                colSpan={3} 
-                className="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 px-6 text-xl font-bold text-center"
-              >
-                {hostelName}
-              </th>
-            </tr>
-          </thead>
-          
-          <tbody>
-            {/* Column Headers Row */}
-            <tr className="bg-purple-100">
-              <th className="py-3 px-4 text-left font-semibold text-purple-800 border-r border-purple-200">
-                S.No
-              </th>
-              <th className="py-3 px-4 text-center font-semibold text-purple-800 border-r border-purple-200">
-                AC Rooms
-              </th>
-              <th className="py-3 px-4 text-center font-semibold text-purple-800">
-                Non-AC Rooms
-              </th>
-            </tr>
-            
-            {/* Data Rows */}
-            {priceData.map((row, index) => (
-              <tr 
-                key={index}
-                className={`${
-                  index % 2 === 0 ? 'bg-white' : 'bg-purple-50'
-                } hover:bg-purple-100 transition-colors duration-200`}
-              >
-                <td className="py-4 px-4 font-medium text-purple-900 border-r border-purple-200">
-                  {row.roomType}
-                </td>
-                <td className="py-4 px-4 text-center font-bold text-purple-700 border-r border-purple-200">
-                  <span className="bg-purple-200 px-3 py-1 rounded-full text-sm">
-                    {row.acPrice}
-                  </span>
-                </td>
-                <td className="py-4 px-4 text-center font-bold text-purple-700">
-                  <span className="bg-purple-200 px-3 py-1 rounded-full text-sm">
-                    {row.nonAcPrice}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      {/* Footer Note */}
-      
-    </div>
+    <section className="w-full max-w-5xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-extrabold text-center text-[#2c3e50] mb-6 tracking-tight">Room Pricing</h2>
+      <Tabs defaultValue="ac" className="w-full">
+        <TabsList className="flex justify-center gap-4 bg-[#f1f5f9] rounded-lg p-1">
+          <TabsTrigger value="ac" className="rounded-full px-6 py-2 font-medium text-[#1e293b] data-[state=active]:bg-[#5A00F0] data-[state=active]:text-white">AC</TabsTrigger>
+          <TabsTrigger value="nonac" className="rounded-full px-6 py-2 font-medium text-[#1e293b] data-[state=active]:bg-[#5A00F0] data-[state=active]:text-white">Non AC</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ac">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <Home className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">1-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{ac.seater1}</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <Home className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">2-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{ac.seater2}</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <Home className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">3-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{ac.seater3}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="nonac">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <BadgeCheck className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">1-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{nonac.seater1}</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <BadgeCheck className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">2-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{nonac.seater2}</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border border-[#5A00F0]/20">
+              <CardContent className="p-6 flex flex-col items-center">
+                <BadgeCheck className="text-[#5A00F0] w-6 h-6 mb-2" />
+                <p className="font-semibold text-lg mb-1">3-Seater</p>
+                <p className="text-[#5A00F0] text-xl font-bold">₹{nonac.seater3}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </section>
   );
 };
 
-export default PriceTemplate;
+export default HostelRoomOptions;
