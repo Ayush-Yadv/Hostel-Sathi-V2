@@ -53,6 +53,7 @@ export default function HostelDetailsPage() {
   const params = useParams()
   const searchParams = useSearchParams()
   const collegeParam = searchParams.get("college")
+  const returnToFilters = searchParams.get("returnToFilters")
   const id = Number(params.id)
 
   // State for mobile menu
@@ -68,6 +69,9 @@ export default function HostelDetailsPage() {
 
   // State for saved hostels
   const [savedHostels, setSavedHostels] = useState<number[]>([])
+  
+  // State for recommended hostels
+  const [recommendedHostels, setRecommendedHostels] = useState<Hostel[]>([])
   
   // State for booking form
   const [bookingForm, setBookingForm] = useState({
@@ -132,12 +136,25 @@ export default function HostelDetailsPage() {
     const foundHostel = hostelsList.find((h) => h.id === id)
     if (foundHostel) {
       setHostel(foundHostel)
+      
       // Get random 3 reviews for this hostel
       const hostelReviews = reviewsList
         .filter(review => review.hostelName === foundHostel.name)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3)
       setReviews(hostelReviews)
+      
+      // Generate random recommended hostels
+      // Filter out current hostel and get hostels of the same type
+      const sameTypeHostels = hostelsList.filter(h => 
+        h.id !== id && h.type === foundHostel.type
+      )
+      
+      // Randomly shuffle the array
+      const shuffled = [...sameTypeHostels].sort(() => 0.5 - Math.random())
+      
+      // Take the first 3 hostels
+      setRecommendedHostels(shuffled.slice(0, 3))
     } else {
       router.push("/hostels?college=" + encodeURIComponent(collegeParam || ""))
     }
@@ -317,6 +334,24 @@ export default function HostelDetailsPage() {
 
       {/* Main Content */}
       <main className="flex-1 bg-gray-50">
+        {/* Back Button */}
+        <div className="max-w-6xl mx-auto px-4 pt-4">
+          <button 
+            onClick={() => {
+              if (returnToFilters === 'true') {
+                // Go back to the hostels page with filters preserved
+                router.back();
+              } else {
+                // Go to the hostels page without filters
+                router.push('/hostels');
+              }
+            }}
+            className="flex items-center text-[#5A00F0] hover:underline mb-4"
+          >
+            <ArrowLeft size={18} className="mr-1" />
+            <span>Back to Hostels</span>
+          </button>
+        </div>
         {hostel ? (
           <>
             {/* Image Gallery */}
@@ -772,13 +807,12 @@ export default function HostelDetailsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {hostelsList
-                    .filter(h => h.id !== hostel.id && !savedHostels.includes(h.id))
-                    .slice(0, 3)
+                  {recommendedHostels
+                    .filter(h => !savedHostels.includes(h.id))
                     .map((recommendedHostel) => (
                       <Link
                         key={recommendedHostel.id}
-                        href={`/hostels/${recommendedHostel.id}${collegeParam ? `?college=${encodeURIComponent(collegeParam)}` : ""}`}
+                        href={`/hostels/${recommendedHostel.id}?college=${encodeURIComponent(collegeParam || "")}&returnToFilters=true`}
                         className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                       >
                         <div className="relative h-48">

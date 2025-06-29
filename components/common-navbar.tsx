@@ -138,6 +138,10 @@ export default function CommonNavbar() {
                   <BookOpen size={24} />
                   <span>Hostels/PG's</span>
                 </Link>
+                <Link href="/blogs" className="flex items-center gap-3 text-lg hover:text-[#5A00F0] transition-colors">
+                  <BookOpen size={24} />
+                  <span>Blogs</span>
+                </Link>
                 {isLoggedIn ? (
                   <button
                     onClick={handleAuthAction}

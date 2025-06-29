@@ -42,13 +42,16 @@ export default function HostelsPage() {
 
   // State for hostels
   const [hostels, setHostels] = useState<Hostel[]>([]) 
-  const [selectedCollege, setSelectedCollege] = useState(collegeParam || "")
-
+  const [selectedCollege, setSelectedCollege] = useState("")
+  
   // New filter states
   const [accommodationType, setAccommodationType] = useState<HostelType | "">("")
   const [genderPreference, setGenderPreference] = useState<GenderType | "">("")
   const [showFilters, setShowFilters] = useState(false)
   const [filtersApplied, setFiltersApplied] = useState(false)
+  
+  // Flag to track if initial load is complete
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false)
 
   // State for login status
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -59,6 +62,7 @@ export default function HostelsPage() {
   // Handle window resize
   const [isDesktop, setIsDesktop] = useState(false)
 
+  // Load saved filters from localStorage on initial load
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 1024)
@@ -70,12 +74,48 @@ export default function HostelsPage() {
     // Add event listener
     window.addEventListener("resize", handleResize)
 
-    // Use Firebase auth state instead of localStorage
+    // Load filters from localStorage
+    try {
+      const savedFilters = localStorage.getItem('hostelFilters')
+      if (savedFilters) {
+        const filters = JSON.parse(savedFilters)
+        
+        // Set initial college from URL param or localStorage
+        if (collegeParam) {
+          setSelectedCollege(collegeParam)
+        } else if (filters.selectedCollege) {
+          setSelectedCollege(filters.selectedCollege)
+        }
+        
+        if (filters.accommodationType) {
+          setAccommodationType(filters.accommodationType)
+        }
+        
+        if (filters.genderPreference) {
+          setGenderPreference(filters.genderPreference)
+        }
+        
+        if (filters.showFilters) {
+          setShowFilters(filters.showFilters)
+        }
+        
+        if (filters.filtersApplied) {
+          setFiltersApplied(filters.filtersApplied)
+        }
+      } else if (collegeParam) {
+        // If no saved filters but we have a college param, use that
+        setSelectedCollege(collegeParam)
+      }
+    } catch (error) {
+      console.error("Error loading filters from localStorage:", error)
+    }
+
+    // Use Firebase auth state
     const unsubscribe = onAuthChange(async (user) => {
       if (user) {
         setIsLoggedIn(true)
         
-        // Get saved hostels from Firestore instead of localStorage
+        // Get saved hostels from Firestore
         try {
           const result = await getSavedHostels(user.uid)
           if (result.savedHostels) {
@@ -90,12 +130,30 @@ export default function HostelsPage() {
       }
     })
 
+    setInitialLoadComplete(true)
+
     // Clean up
     return () => {
       window.removeEventListener("resize", handleResize)
       unsubscribe()
     }
-  }, [])
+  }, [collegeParam])
+
+  // Save filters to localStorage when they change
+  useEffect(() => {
+    // Only save after initial load is complete to avoid overwriting with empty values
+    if (initialLoadComplete) {
+      const filtersToSave = {
+        selectedCollege,
+        accommodationType,
+        genderPreference,
+        showFilters,
+        filtersApplied
+      }
+      
+      localStorage.setItem('hostelFilters', JSON.stringify(filtersToSave))
+    }
+  }, [selectedCollege, accommodationType, genderPreference, showFilters, filtersApplied, initialLoadComplete])
 
   // Load and filter hostels
   useEffect(() => {
@@ -120,7 +178,7 @@ export default function HostelsPage() {
     }
 
     setHostels(filteredHostels)
-  }, [selectedCollege, accommodationType, genderPreference, collegeParam])
+  }, [selectedCollege, accommodationType, genderPreference])
 
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -218,6 +276,9 @@ export default function HostelsPage() {
     setAccommodationType("")
     setGenderPreference("")
     setFiltersApplied(false)
+    
+    // Clear filters from localStorage
+    localStorage.removeItem('hostelFilters')
   }
 
   return (
@@ -406,7 +467,7 @@ export default function HostelsPage() {
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                     >
                       <Link
-                        href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}`}
+                        href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}&returnToFilters=true`}
                         className="block"
                       >
                         <div className="relative h-48">
@@ -454,7 +515,7 @@ export default function HostelsPage() {
                       </Link>
                       <div className="px-4 pb-4">
                         <Link
-                          href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}`}
+                          href={`/hostels/${hostel.id}?college=${encodeURIComponent(selectedCollege || "")}&returnToFilters=true`}
                           className="w-full bg-[#5A00F0] text-white font-semibold py-2 rounded-md hover:bg-[#4800C0] transition flex items-center justify-center gap-2"
                         >
                           <span>View Details</span>

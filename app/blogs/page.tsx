@@ -723,9 +723,20 @@ export default function BlogsPage() {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <CommonNavbar />
         <main className="max-w-6xl mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-[#5A00F0] to-[#B366FF] bg-clip-text text-transparent">
-            Blogs & Articles
-          </h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#5A00F0] to-[#B366FF] bg-clip-text text-transparent">
+              Blogs & Articles
+            </h1>
+            <Link 
+              href="/blogs/write" 
+              className="bg-[#5A00F0] text-white px-4 py-2 rounded-md hover:bg-[#4800C0] transition flex items-center gap-2"
+            >
+              <span>Write Blog</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+            </Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {blogs.slice(0, visibleBlogs).map((blog) => (
               <article
